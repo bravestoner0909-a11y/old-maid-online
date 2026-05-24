@@ -15,6 +15,66 @@
       --card-w:64px; --card-h:94px; --radius:28px;
     }
     *{box-sizing:border-box} html,body{margin:0;min-height:100%;color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at 10% 10%,rgba(255,255,255,.08),transparent 24%),radial-gradient(circle at 90% 8%,rgba(255,255,255,.06),transparent 22%),linear-gradient(135deg,var(--bg0),var(--bg2));overflow-x:hidden} button,input,select{font:inherit} button{border:1px solid rgba(255,255,255,.24);color:#080808;background:linear-gradient(180deg,#f7f7f7,#b9b9b9);padding:10px 14px;font-weight:850;border-radius:14px;cursor:pointer;transition:transform .14s ease,filter .14s ease,opacity .14s ease,box-shadow .14s ease;box-shadow:0 10px 24px rgba(0,0,0,.26)}button:hover{transform:translateY(-1px);filter:brightness(1.06);box-shadow:0 14px 32px rgba(0,0,0,.34)}button:disabled{cursor:not-allowed;opacity:.38;transform:none;box-shadow:none}.btn-secondary{color:var(--text);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2)}.btn-ghost{color:var(--text);background:transparent;border:1px solid rgba(255,255,255,.16);box-shadow:none}.btn-mini{padding:7px 10px;font-size:12px;border-radius:11px}input,select{width:100%;border:1px solid var(--line);outline:none;color:var(--text);background:rgba(255,255,255,.075);border-radius:14px;padding:12px 13px}select option{color:#111}.hidden{display:none!important}.screen{display:none;min-height:100vh;padding:22px;position:relative}.screen.active{display:block}.glass{border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.04));box-shadow:0 24px 80px var(--shadow);backdrop-filter:blur(16px);border-radius:var(--radius)}.muted{color:var(--muted);line-height:1.55;font-size:14px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.error{color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);padding:10px;border-radius:14px;margin-top:10px}.moving-cards-bg{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;opacity:.42}.bg-card-line{position:absolute;display:flex;gap:20px;transform:rotate(-18deg);animation:cardStream 18s linear infinite}.bg-card-line:nth-child(1){top:4%;left:-20%;animation-duration:22s}.bg-card-line:nth-child(2){top:32%;left:-35%;animation-duration:28s;animation-delay:-6s}.bg-card-line:nth-child(3){top:64%;left:-25%;animation-duration:24s;animation-delay:-11s}.bg-card{width:70px;height:100px;border-radius:13px;border:1px solid rgba(255,255,255,.16);background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.13),transparent 28%),linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.045));box-shadow:0 14px 34px rgba(0,0,0,.32);position:relative}.bg-card::after{content:"♠";position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.24);font-size:34px;filter:grayscale(1)}@keyframes cardStream{from{transform:translateX(-20%) rotate(-18deg)}to{transform:translateX(120vw) rotate(-18deg)}}.center-page{min-height:calc(100vh - 44px);display:grid;place-items:center;position:relative;z-index:1}.hero-card{width:min(540px,100%);padding:30px;text-align:center}.dealer-badge{width:104px;height:104px;margin:0 auto 18px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);background:radial-gradient(circle at 34% 26%,rgba(255,255,255,.28),transparent 30%),linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.04));box-shadow:inset 0 0 26px rgba(255,255,255,.055),0 20px 48px rgba(0,0,0,.48);font-size:46px;filter:grayscale(1);animation:dealerIdle 2.4s ease-in-out infinite alternate}.hero-title{margin:0;font-size:clamp(42px,8vw,76px);line-height:.88;letter-spacing:-.085em;font-weight:1000;text-shadow:0 18px 44px rgba(0,0,0,.7)}.hero-subtitle{margin:14px auto 24px;max-width:420px}.form-stack{display:grid;gap:12px}.list-shell{width:min(1180px,100%);margin:0 auto;position:relative;z-index:1}.list-topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px;padding:18px}.brand-row{display:flex;align-items:center;gap:14px;min-width:0}.brand-icon{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:28px;background:rgba(255,255,255,.1);border:1px solid var(--line);filter:grayscale(1)}.brand-title{margin:0;font-size:30px;letter-spacing:-.06em;line-height:1}.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}.room-card{padding:18px;min-height:180px;position:relative;overflow:hidden;cursor:pointer;transition:transform .18s ease,border-color .18s ease,background .18s ease}.room-card:hover{transform:translateY(-4px) scale(1.01);border-color:rgba(255,255,255,.36);background:linear-gradient(145deg,rgba(255,255,255,.14),rgba(255,255,255,.055))}.room-card::after{content:"♣";position:absolute;right:-10px;bottom:-24px;font-size:120px;color:rgba(255,255,255,.045);transform:rotate(-12deg)}.room-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.room-name{margin:0;font-size:22px;letter-spacing:-.04em;line-height:1.1}.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(0,0,0,.2);color:#ddd;font-size:12px;font-weight:800;white-space:nowrap}.room-meta{display:grid;gap:8px;margin-top:18px;font-size:13px;color:var(--muted)}.room-meta-row{display:flex;justify-content:space-between;gap:10px}.lobby-layout{width:min(1100px,100%);margin:0 auto;min-height:calc(100vh - 44px);display:grid;grid-template-columns:1fr 330px;gap:18px;align-items:stretch}.lobby-main,.lobby-side{padding:22px}.lobby-title{margin:0;font-size:42px;letter-spacing:-.07em}.player-list{display:grid;gap:12px;margin-top:20px}.player-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.055)}.avatar{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;border:1px solid var(--line);background:rgba(255,255,255,.09);filter:grayscale(1)}.player-left{display:flex;align-items:center;gap:12px}.countdown{position:fixed;inset:0;display:none;place-items:center;z-index:100;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);font-size:clamp(90px,20vw,220px);font-weight:1000;text-shadow:0 30px 70px rgba(0,0,0,.72)}.countdown.show{display:grid}.game-wrap{width:min(1420px,100%);margin:0 auto;min-height:calc(100vh - 44px);display:grid;grid-template-rows:auto 1fr;gap:14px}.game-topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px}.turn-badge{padding:8px 12px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.1);font-weight:950;white-space:nowrap}.game-board{display:grid;grid-template-areas:". top ." "left center right" ". bottom .";grid-template-columns:minmax(260px,1fr) minmax(360px,1.14fr) minmax(260px,1fr);grid-template-rows:minmax(172px,auto) minmax(270px,1fr) minmax(190px,auto);gap:16px}.seat{position:relative;min-height:160px;padding:13px;display:flex;flex-direction:column;gap:10px;overflow:hidden;border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.04)),repeating-linear-gradient(45deg,rgba(255,255,255,.018) 0 2px,transparent 2px 9px);box-shadow:inset 0 0 32px rgba(255,255,255,.025),0 14px 42px rgba(0,0,0,.22)}.seat.active{outline:2px solid rgba(255,255,255,.72);box-shadow:0 0 40px rgba(255,255,255,.14),0 14px 42px rgba(0,0,0,.22)}.seat.defending{outline:2px solid rgba(255,255,255,.9);animation:defensePulse .8s ease-in-out infinite alternate}.seat.finished{opacity:.52;filter:grayscale(1)}.seat-top{grid-area:top}.seat-left{grid-area:left}.seat-right{grid-area:right}.seat-bottom{grid-area:bottom}.seat-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.seat-name{font-weight:950;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.card-count{color:var(--muted);font-size:12px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;background:rgba(0,0,0,.25)}.hand-frame{position:relative;flex:1;min-height:112px;display:flex;align-items:center;padding:10px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.16);overflow-x:auto;overflow-y:hidden}.hand{display:flex;flex-direction:row;align-items:center;gap:8px;min-height:100px;min-width:max-content;padding:6px}.seat-top .hand{transform:rotate(180deg)}.seat-left .hand{transform:rotate(90deg);transform-origin:center}.seat-right .hand{transform:rotate(-90deg);transform-origin:center}.table-center{grid-area:center;min-height:270px;padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:12px;overflow:hidden;border:1px solid rgba(255,255,255,.16);border-radius:30px;background:radial-gradient(circle at 50% 18%,rgba(255,255,255,.09),transparent 30%),linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.035)),repeating-linear-gradient(45deg,rgba(255,255,255,.025) 0 2px,transparent 2px 9px)}.dealer-face{width:96px;height:96px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.28),transparent 30%),linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.045));box-shadow:inset 0 0 24px rgba(255,255,255,.055),0 18px 42px rgba(0,0,0,.42);font-size:42px;filter:grayscale(1);animation:dealerIdle 2.4s ease-in-out infinite alternate}.oldmaid-logo{margin:0;font-size:clamp(34px,4vw,58px);letter-spacing:-.085em;line-height:.92;font-weight:1000;text-shadow:0 14px 38px rgba(0,0,0,.68)}.order-line{font-size:13px;color:#eee;font-weight:900}.floating-zone{min-height:78px;display:flex;align-items:center;justify-content:center}.lasso-card{position:relative;display:grid;place-items:center;animation:lassoFloat 1s ease-in-out infinite alternate}.lasso-card::before{content:"";position:absolute;width:118px;height:118px;border:2px dashed rgba(255,255,255,.48);border-radius:50%;animation:lassoSpin 2.2s linear infinite}.lasso-card .card{transform:scale(.72)}.card{width:var(--card-w);height:var(--card-h);flex:0 0 auto;position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:7px;border-radius:12px;border:1px solid rgba(0,0,0,.24);color:#070707;background:linear-gradient(145deg,#f7f7f7,#d7d7d7);box-shadow:0 8px 18px rgba(0,0,0,.3);font-weight:950;user-select:none;transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}.card:hover{filter:brightness(1.06)}.card.back{color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.22);background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.16),transparent 28%),linear-gradient(135deg,#4a4a4a,#111)}.card.back::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;font-size:28px;font-weight:1000}.card.pickable{cursor:pointer;outline:2px solid rgba(255,255,255,.82);animation:floaty 1s ease-in-out infinite alternate}.card.joker{background:linear-gradient(135deg,#fff,#cfcfcf)}.suit{font-size:15px;line-height:1}.rank-big{align-self:center;margin-top:6px;font-size:28px}.slot{width:28px;height:96px;flex:0 0 auto;border:1px dashed rgba(255,255,255,.16);border-radius:999px;opacity:.2;transition:opacity .13s ease,width .13s ease,background .13s ease,box-shadow .13s ease}.slot.active{width:36px;opacity:1;cursor:pointer;background:linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,.05));box-shadow:0 0 22px rgba(255,255,255,.28),inset 0 0 18px rgba(255,255,255,.18);animation:slotGlow .7s ease-in-out infinite alternate}.game-side-toggle,.discard-toggle-game{position:fixed;top:18px;z-index:70}.game-side-toggle{left:18px}.discard-toggle-game{right:18px}.info-sidebar,.discard-sidebar{position:fixed;top:72px;width:min(340px,calc(100vw - 36px));max-height:calc(100vh - 90px);overflow:auto;z-index:65;padding:16px;transition:transform .22s ease,opacity .22s ease}.info-sidebar{left:18px}.discard-sidebar{right:18px}.info-sidebar.closed{transform:translateX(calc(-100% - 45px));opacity:.18}.discard-sidebar.closed{transform:translateX(calc(100% + 45px));opacity:.18}.side-section{border:1px solid var(--line);background:rgba(0,0,0,.18);border-radius:18px;padding:14px;margin-bottom:12px}.log-list{display:grid;gap:8px;font-size:13px;color:#ddd;max-height:220px;overflow:auto}.discard-pair{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px dashed rgba(255,255,255,.13);padding-top:9px;margin-top:9px}.mini-cards{display:flex;gap:5px}.mini-card{width:34px;height:50px;border-radius:8px;background:linear-gradient(145deg,#f7f7f7,#cfcfcf);color:#080808;display:grid;place-items:center;font-size:12px;font-weight:900}.chat-panel{position:fixed;left:50%;bottom:18px;width:min(560px,calc(100vw - 28px));transform:translateX(-50%) translateY(130%);z-index:75;overflow:hidden;transition:transform .18s ease}.chat-panel.open{transform:translateX(-50%) translateY(0)}.chat-log{max-height:150px;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:7px;font-size:13px;background:rgba(0,0,0,.28)}.chat-input{border-radius:0;border-left:0;border-right:0;border-bottom:0}.vote-banner{position:fixed;top:14px;left:50%;width:min(430px,calc(100vw - 28px));z-index:100;padding:13px;transform:translate(-50%,-140%);transition:transform .18s ease}.vote-banner.open{transform:translate(-50%,0)}.vote-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px;color:#eee;font-weight:900}.vote-text{color:var(--text);font-size:13px;line-height:1.45;margin-bottom:9px}.vote-progress{height:7px;margin-bottom:10px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}.vote-fill{width:0;height:100%;background:linear-gradient(90deg,#f5f5f5,#aaa,#555)}.vote-fill.running{animation:voteFill 6s linear forwards}.fx-layer{position:fixed;inset:0;z-index:90;display:none;place-items:center;background:rgba(0,0,0,.68);pointer-events:none}.fx-layer.show{display:grid}.fx-content{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center}.fx-title{font-size:clamp(48px,10vw,120px);line-height:.9;font-weight:1000;letter-spacing:-.08em;text-shadow:0 18px 44px rgba(0,0,0,.72)}.fx-row{display:flex;gap:18px;animation:pairPop 1.4s ease forwards}.modal-backdrop{position:fixed;inset:0;z-index:110;display:none;place-items:center;padding:18px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px)}.modal-backdrop.show{display:grid}.modal-card{width:min(520px,100%);padding:22px}.modal-title{margin:0 0 12px;font-size:28px;letter-spacing:-.05em}.form-grid{display:grid;gap:12px}.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.travel-layer{position:fixed;inset:0;pointer-events:none;z-index:95;overflow:hidden}.travel-card{position:fixed;left:0;top:0;z-index:96;will-change:transform,opacity;transition:transform .62s cubic-bezier(.18,.86,.2,1),opacity .62s ease,filter .62s ease}@keyframes dealerIdle{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-6px) rotate(2deg)}}@keyframes floaty{from{transform:translateY(0)}to{transform:translateY(-6px)}}@keyframes defensePulse{from{filter:brightness(1)}to{filter:brightness(1.18)}}@keyframes slotGlow{from{filter:brightness(1)}to{filter:brightness(1.35)}}@keyframes lassoFloat{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-12px) rotate(2deg)}}@keyframes lassoSpin{to{transform:rotate(360deg)}}@keyframes pairPop{0%{transform:translateY(30px) scale(.4);opacity:0}20%{transform:translateY(0) scale(1.08);opacity:1}72%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-36px) scale(.72);opacity:0}}@keyframes voteFill{from{width:0}to{width:100%}}@media(max-width:980px){.screen{padding:12px}.list-topbar,.game-topbar{align-items:stretch;flex-direction:column}.lobby-layout{grid-template-columns:1fr}.game-board{grid-template-areas:"top" "left" "right" "center" "bottom";grid-template-columns:1fr;grid-template-rows:auto}.seat-top .hand,.seat-left .hand,.seat-right .hand{transform:rotate(0)}.info-sidebar,.discard-sidebar{top:68px}:root{--card-w:56px;--card-h:84px}}
+  
+    /* PATCH: audio controls + viewer-relative side layout */
+    .audio-control{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .audio-pill{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 9px;background:rgba(0,0,0,.22)}
+    .seat-left .hand-frame,.seat-right .hand-frame{
+      min-height:260px;
+      max-height:360px;
+      align-items:flex-start;
+      justify-content:center;
+      overflow-x:hidden;
+      overflow-y:auto;
+    }
+    .seat-left .hand,.seat-right .hand{
+      flex-direction:column;
+      min-width:0;
+      width:100%;
+      min-height:max-content;
+      justify-content:flex-start;
+    }
+    .seat-left .card,.seat-right .card{
+      margin-top:-24px;
+    }
+    .seat-left .card:first-child,.seat-right .card:first-child{
+      margin-top:0;
+    }
+    .seat-left .slot,.seat-right .slot{
+      width:96px;
+      height:26px;
+      margin-top:-12px;
+    }
+    .seat-left .slot.active,.seat-right .slot.active{
+      width:96px;
+      height:34px;
+    }
+    .seat-left .hand,.seat-right .hand,.seat-top .hand{
+      transform:none !important;
+    }
+    .seat-top .card{
+      transform:rotate(180deg);
+    }
+    .seat-left .card{
+      transform:rotate(90deg);
+    }
+    .seat-right .card{
+      transform:rotate(-90deg);
+    }
+    .seat-left .card.pickable,.seat-right .card.pickable{
+      animation:floatySide 1s ease-in-out infinite alternate;
+    }
+    @keyframes floatySide{
+      from{filter:brightness(1); margin-left:0}
+      to{filter:brightness(1.15); margin-left:8px}
+    }
+    @media (max-width:980px){
+      .seat-left .hand-frame,.seat-right .hand-frame{min-height:112px;max-height:none;overflow-x:auto;overflow-y:hidden}
+      .seat-left .hand,.seat-right .hand{flex-direction:row;width:auto;min-width:max-content}
+      .seat-left .card,.seat-right .card{margin-top:0;transform:none}
+      .seat-top .card{transform:none}
+    }
+
   </style>
 </head>
 <body>
@@ -44,7 +104,7 @@
     <button class="game-side-toggle btn-secondary" id="toggleInfoBtn">정보창</button><button class="discard-toggle-game btn-secondary" id="toggleDiscardBtn">버린 짝</button>
     <aside class="info-sidebar glass" id="infoSidebar"><div class="side-section"><strong>현재 상태</strong><p class="muted" id="gameStatusText">-</p></div><div class="side-section"><strong>스코어/등수</strong><div class="score-list" id="rankList"></div></div><div class="side-section"><strong>규칙</strong><p class="muted">뽑은 카드는 중앙에 뜬 뒤 원하는 슬롯에 넣습니다.</p></div><div class="side-section"><strong>로그</strong><div class="log-list" id="gameLog"></div></div><button id="leaveGameBtn" class="btn-secondary">방 나가기</button></aside>
     <aside class="discard-sidebar glass closed" id="discardSidebar"><h2>버린 짝</h2><div id="discardList"></div></aside>
-    <div class="game-wrap"><header class="game-topbar glass"><div class="turn-badge" id="turnBadge">Turn</div><div class="muted" id="gameMessage">-</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="shuffleBtn" class="btn-secondary">내 덱 섞기</button><button id="settingsVoteBtn" class="btn-secondary">설정 투표</button></div></header><div class="game-board"><article class="seat seat-top" id="seat0"><div class="seat-head"><span class="seat-name" id="name0">-</span><span class="card-count" id="count0">0장</span></div><div class="hand-frame"><div class="hand" id="hand0"></div></div></article><article class="seat seat-left" id="seat1"><div class="seat-head"><span class="seat-name" id="name1">-</span><span class="card-count" id="count1">0장</span></div><div class="hand-frame"><div class="hand" id="hand1"></div></div></article><section class="table-center"><div class="dealer-face" id="dealerFace">😐🎩</div><h1 class="oldmaid-logo">OLD MAID</h1><div class="order-line" id="orderLine">-</div><div class="floating-zone" id="floatingZone"></div><div class="muted" id="centerHint">-</div></section><article class="seat seat-right" id="seat2"><div class="seat-head"><span class="seat-name" id="name2">-</span><span class="card-count" id="count2">0장</span></div><div class="hand-frame"><div class="hand" id="hand2"></div></div></article><article class="seat seat-bottom" id="seat3"><div class="seat-head"><span class="seat-name" id="name3">-</span><span class="card-count" id="count3">0장</span></div><div class="hand-frame"><div class="hand" id="hand3"></div></div></article></div></div>
+    <div class="game-wrap"><header class="game-topbar glass"><div class="turn-badge" id="turnBadge">Turn</div><div class="muted" id="gameMessage">-</div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button id="shuffleBtn" class="btn-secondary">내 덱 섞기</button><button id="settingsVoteBtn" class="btn-secondary">설정 투표</button><button id="muteBtn" class="btn-secondary">🔊 소리 켜기</button><span id="audioStatus" class="audio-pill">첫 클릭 후 BGM</span></div></header><div class="game-board"><article class="seat seat-top" id="seat0"><div class="seat-head"><span class="seat-name" id="name0">-</span><span class="card-count" id="count0">0장</span></div><div class="hand-frame"><div class="hand" id="hand0"></div></div></article><article class="seat seat-left" id="seat1"><div class="seat-head"><span class="seat-name" id="name1">-</span><span class="card-count" id="count1">0장</span></div><div class="hand-frame"><div class="hand" id="hand1"></div></div></article><section class="table-center"><div class="dealer-face" id="dealerFace">😐🎩</div><h1 class="oldmaid-logo">OLD MAID</h1><div class="order-line" id="orderLine">-</div><div class="floating-zone" id="floatingZone"></div><div class="muted" id="centerHint">-</div></section><article class="seat seat-right" id="seat2"><div class="seat-head"><span class="seat-name" id="name2">-</span><span class="card-count" id="count2">0장</span></div><div class="hand-frame"><div class="hand" id="hand2"></div></div></article><article class="seat seat-bottom" id="seat3"><div class="seat-head"><span class="seat-name" id="name3">-</span><span class="card-count" id="count3">0장</span></div><div class="hand-frame"><div class="hand" id="hand3"></div></div></article></div></div>
   </section>
 
   <div class="chat-panel glass" id="chatPanel"><div class="chat-log" id="chatLog"></div><input class="chat-input" id="chatInput" placeholder="메시지를 입력하고 Enter"></div>
@@ -76,6 +136,11 @@
     let spectatorMode = false;
     let spectatorViewVisitorId = null;
     let activeVote = null;
+    let audioUnlocked = false;
+    let muted = false;
+    let bgm = null;
+    let audioCtx = null;
+    const sfxMap = {};
 
     const SUITS = [
       { k:"S", s:"♠" }, { k:"C", s:"♣" }, { k:"H", s:"♥" }, { k:"D", s:"♦" }
@@ -110,6 +175,10 @@
       $("toggleDiscardBtn").addEventListener("click", () => $("discardSidebar").classList.toggle("closed"));
       $("shuffleBtn").addEventListener("click", shuffleMyHand);
       $("settingsVoteBtn").addEventListener("click", proposeWinnerChatVote);
+      $("muteBtn").addEventListener("click", toggleMute);
+      ["click","keydown","touchstart"].forEach((eventName) => {
+        document.addEventListener(eventName, unlockAudio, { once:true, passive:true });
+      });
       $("voteYesBtn").addEventListener("click", () => castVote(true));
       $("voteNoBtn").addEventListener("click", () => castVote(false));
       $("spectateBtn").addEventListener("click", enterSpectatorMode);
@@ -309,10 +378,16 @@
       const layer = $("countdownLayer");
       layer.classList.add("show");
       const started = new Date(currentRoom.countdown_started_at).getTime();
+      layer.dataset.lastText = "";
       countdownTimer = setInterval(async () => {
         const elapsed = Math.floor((Date.now() - started) / 1000);
         const left = 3 - elapsed;
-        layer.textContent = left > 0 ? String(left) : "START";
+        const nextText = left > 0 ? String(left) : "START";
+        if (layer.dataset.lastText !== nextText) {
+          layer.dataset.lastText = nextText;
+          playSfx("countdown");
+        }
+        layer.textContent = nextText;
         if (elapsed >= 4) {
           clearInterval(countdownTimer);
           layer.classList.remove("show");
@@ -393,6 +468,45 @@
     function seatOrderPlayers() {
       return currentPlayers.filter((p) => !p.is_spectator).sort((a,b) => a.seat_index - b.seat_index);
     }
+    function viewerVisitorId() {
+      if (spectatorMode && spectatorViewVisitorId) return spectatorViewVisitorId;
+      return visitorId;
+    }
+    function viewerPlayer() {
+      const vid = viewerVisitorId();
+      return currentPlayers.find((p) => !p.is_spectator && p.visitor_id === vid)
+        || currentPlayers.find((p) => !p.is_spectator && p.visitor_id === visitorId)
+        || seatOrderPlayers()[0]
+        || null;
+    }
+    function playerAtSeatWrapped(seat) {
+      const max = currentRoom?.max_players || 4;
+      const wrapped = (seat + max) % max;
+      return getPlayerBySeat(wrapped);
+    }
+    function relativeVisualPlayers() {
+      const max = currentRoom?.max_players || 4;
+      const viewer = viewerPlayer();
+      const slots = [null, null, null, null]; // top, left, right, bottom
+      if (!viewer) return seatOrderPlayers();
+      const base = viewer.seat_index;
+      const dir = game?.direction || 1;
+      const next = playerAtSeatWrapped(base + dir);
+      const prev = playerAtSeatWrapped(base - dir);
+      const opposite = playerAtSeatWrapped(base + dir * 2);
+      slots[3] = viewer;
+      if (max <= 2) {
+        slots[0] = next && next.visitor_id !== viewer.visitor_id ? next : prev;
+      } else if (max === 3) {
+        slots[2] = next && next.visitor_id !== viewer.visitor_id ? next : null;
+        slots[1] = prev && prev.visitor_id !== viewer.visitor_id ? prev : null;
+      } else {
+        slots[2] = next && next.visitor_id !== viewer.visitor_id ? next : null;
+        slots[1] = prev && prev.visitor_id !== viewer.visitor_id ? prev : null;
+        slots[0] = opposite && opposite.visitor_id !== viewer.visitor_id ? opposite : null;
+      }
+      return slots;
+    }
     function activePlayers() {
       return seatOrderPlayers().filter((p) => game?.hands?.[p.visitor_id]?.length > 0 && !game.ranks?.[p.visitor_id]);
     }
@@ -449,13 +563,14 @@
     }
 
     function renderSeats(players, targetSeat) {
+      const visualPlayers = relativeVisualPlayers();
       const visualMap = ["seat0", "seat1", "seat2", "seat3"];
       const nameMap = ["name0", "name1", "name2", "name3"];
       const countMap = ["count0", "count1", "count2", "count3"];
       const handMap = ["hand0", "hand1", "hand2", "hand3"];
       for (let i = 0; i < 4; i += 1) {
         const seatEl = $(visualMap[i]);
-        const p = players[i];
+        const p = visualPlayers[i];
         seatEl.classList.remove("active", "defending", "finished");
         $(nameMap[i]).textContent = "-";
         $(countMap[i]).textContent = "0장";
@@ -463,7 +578,8 @@
         if (!p) continue;
         const hand = game.hands[p.visitor_id] || [];
         const finished = Boolean(game.ranks?.[p.visitor_id]);
-        $(nameMap[i]).textContent = `${p.nickname}${finished ? ` · ${game.ranks[p.visitor_id]}등` : ""}`;
+        const watching = spectatorMode && spectatorViewVisitorId === p.visitor_id ? " · 관전중" : "";
+        $(nameMap[i]).textContent = `${p.nickname}${finished ? ` · ${game.ranks[p.visitor_id]}등` : ""}${watching}`;
         $(countMap[i]).textContent = `${hand.length}장`;
         seatEl.classList.toggle("active", p.seat_index === game.turnSeat && currentRoom.status !== "finished");
         seatEl.classList.toggle("defending", p.seat_index === targetSeat && currentRoom.status !== "finished");
@@ -545,6 +661,7 @@
       const target = getPlayerBySeat(targetSeat);
       const targetHand = game.hands[target.visitor_id] || [];
       const [card] = targetHand.splice(cardIndex, 1);
+      playSfx("draw");
       game.hands[target.visitor_id] = targetHand;
       game.phase = "inserting";
       game.floating = { card, drawerVisitorId: visitorId, targetVisitorId: target.visitor_id };
@@ -556,6 +673,7 @@
     async function insertFloatingCard(slotIndex) {
       if (game.phase !== "inserting" || game.floating?.drawerVisitorId !== visitorId) return;
       const card = game.floating.card;
+      playSfx("insert");
       const me = currentPlayers.find((p) => p.visitor_id === visitorId);
       const hand = game.hands[visitorId] || [];
       hand.splice(slotIndex, 0, card);
@@ -621,6 +739,7 @@
       game.defenseShuffles = game.defenseShuffles || {};
       if (defending && (game.defenseShuffles[visitorId] || 0) >= 2) return alert("방어 섞기는 최대 2번입니다.");
       game.hands[visitorId] = shuffleArray(game.hands[visitorId] || []);
+      playSfx("shuffle");
       if (defending) game.defenseShuffles[visitorId] = (game.defenseShuffles[visitorId] || 0) + 1;
       game.logs.unshift(defending ? `${nickname}이 방어 섞기를 했습니다. (${game.defenseShuffles[visitorId]}/2)` : `${nickname}이 덱을 섞었습니다.`);
       await saveGame();
@@ -645,7 +764,13 @@
       const lost = game.loserVisitorId === visitorId;
       showResult(lost ? "LOSE 😛" : "WIN 🏆", lost ? `${game.ranks[visitorId]}등입니다. 다시하기 큐를 누르세요.` : `${game.ranks[visitorId]}등으로 탈출했습니다. 관전모드로 들어갈 수 있습니다.`);
     }
-    function showResult(title, text) { $("resultTitle").textContent = title; $("resultText").textContent = text; $("spectateBtn").style.display = title.includes("WIN") ? "block" : "none"; showModal("resultModal"); }
+    function showResult(title, text) {
+      playSfx(title.includes("LOSE") ? "lose" : "win");
+      $("resultTitle").textContent = title;
+      $("resultText").textContent = text;
+      $("spectateBtn").style.display = title.includes("WIN") ? "block" : "none";
+      showModal("resultModal");
+    }
 
     function enterSpectatorMode() {
       spectatorMode = true;
@@ -677,6 +802,9 @@
     }
 
     function showFx(type, card=null, pair=null, name="") {
+      if (type === "pair") playSfx("pair");
+      else if (type === "joker") playSfx("joker");
+      else playSfx("win");
       const layer = $("fxLayer");
       const content = $("fxContent");
       if (type === "pair" && pair) content.innerHTML = `<div class="fx-title">${escapeHtml(name)} PAIR!</div><div class="fx-row"></div>`;
@@ -749,6 +877,95 @@
       if (passed) await db.from("rooms").update({ block_winner_chat:fresh.proposed_value }).eq("id", currentRoom.id);
       $("voteBanner").classList.remove("open");
     }
+
+
+    function unlockAudio() {
+      if (audioUnlocked) return;
+      audioUnlocked = true;
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+      } catch {}
+      try {
+        bgm = bgm || new Audio("./bgm.mp3");
+        bgm.loop = true;
+        bgm.volume = 0.35;
+        bgm.addEventListener("error", () => {
+          if ($("audioStatus")) $("audioStatus").textContent = "bgm.mp3 없음";
+        }, { once:true });
+        if (!muted) bgm.play().then(() => {
+          if ($("audioStatus")) $("audioStatus").textContent = "BGM 재생 중";
+          if ($("muteBtn")) $("muteBtn").textContent = "🔇 음소거";
+        }).catch(() => {
+          if ($("audioStatus")) $("audioStatus").textContent = "BGM 대기 중";
+        });
+      } catch {}
+    }
+
+    function toggleMute() {
+      muted = !muted;
+      unlockAudio();
+      if (bgm) {
+        if (muted) bgm.pause();
+        else bgm.play().catch(() => {});
+      }
+      if ($("muteBtn")) $("muteBtn").textContent = muted ? "🔊 소리 켜기" : "🔇 음소거";
+      if ($("audioStatus")) $("audioStatus").textContent = muted ? "음소거" : "소리 켜짐";
+    }
+
+    function beep(freq, start, duration, type="sine", gainValue=0.045) {
+      if (muted) return;
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + start);
+        gain.gain.setValueAtTime(0.0001, audioCtx.currentTime + start);
+        gain.gain.exponentialRampToValueAtTime(gainValue, audioCtx.currentTime + start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + start + duration);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + start);
+        osc.stop(audioCtx.currentTime + start + duration + 0.03);
+      } catch {}
+    }
+
+    function playSfx(kind) {
+      if (muted) return;
+      unlockAudio();
+      if (kind === "deal") {
+        beep(520, 0, .045, "triangle", .025);
+      } else if (kind === "draw") {
+        beep(420, 0, .08, "triangle", .04);
+        beep(620, .055, .1, "triangle", .035);
+      } else if (kind === "insert") {
+        beep(360, 0, .06, "triangle", .028);
+        beep(520, .045, .08, "triangle", .03);
+      } else if (kind === "shuffle") {
+        beep(300, 0, .045, "triangle", .026);
+        beep(250, .045, .045, "triangle", .022);
+        beep(360, .09, .06, "triangle", .028);
+      } else if (kind === "pair") {
+        beep(660, 0, .09, "square", .034);
+        beep(880, .08, .12, "square", .034);
+        beep(1100, .17, .15, "square", .03);
+      } else if (kind === "joker") {
+        beep(180, 0, .28, "sawtooth", .055);
+        beep(110, .16, .38, "sawtooth", .045);
+        beep(72, .35, .45, "sawtooth", .035);
+      } else if (kind === "win") {
+        beep(620, 0, .1, "triangle", .04);
+        beep(780, .08, .1, "triangle", .04);
+        beep(980, .16, .18, "triangle", .038);
+      } else if (kind === "lose") {
+        beep(210, 0, .16, "sawtooth", .04);
+        beep(140, .12, .22, "sawtooth", .035);
+      } else if (kind === "countdown") {
+        beep(680, 0, .07, "square", .026);
+      }
+    }
+
 
     async function leaveRoom() {
       if (!currentRoom) return;
