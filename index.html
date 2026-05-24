@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OLD MAID Online</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./config.js"></script>
+  <style>
+    :root {
+      --bg0:#030303; --bg1:#0b0b0b; --bg2:#171717;
+      --panel:rgba(255,255,255,.075); --panel2:rgba(255,255,255,.13);
+      --line:rgba(255,255,255,.17); --line2:rgba(255,255,255,.32);
+      --text:#f2f2f2; --muted:#a8a8a8; --soft:#d7d7d7; --shadow:rgba(0,0,0,.48);
+      --card-w:64px; --card-h:94px; --radius:28px;
+    }
+    *{box-sizing:border-box} html,body{margin:0;min-height:100%;color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at 10% 10%,rgba(255,255,255,.08),transparent 24%),radial-gradient(circle at 90% 8%,rgba(255,255,255,.06),transparent 22%),linear-gradient(135deg,var(--bg0),var(--bg2));overflow-x:hidden} button,input,select{font:inherit} button{border:1px solid rgba(255,255,255,.24);color:#080808;background:linear-gradient(180deg,#f7f7f7,#b9b9b9);padding:10px 14px;font-weight:850;border-radius:14px;cursor:pointer;transition:transform .14s ease,filter .14s ease,opacity .14s ease,box-shadow .14s ease;box-shadow:0 10px 24px rgba(0,0,0,.26)}button:hover{transform:translateY(-1px);filter:brightness(1.06);box-shadow:0 14px 32px rgba(0,0,0,.34)}button:disabled{cursor:not-allowed;opacity:.38;transform:none;box-shadow:none}.btn-secondary{color:var(--text);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2)}.btn-ghost{color:var(--text);background:transparent;border:1px solid rgba(255,255,255,.16);box-shadow:none}.btn-mini{padding:7px 10px;font-size:12px;border-radius:11px}input,select{width:100%;border:1px solid var(--line);outline:none;color:var(--text);background:rgba(255,255,255,.075);border-radius:14px;padding:12px 13px}select option{color:#111}.hidden{display:none!important}.screen{display:none;min-height:100vh;padding:22px;position:relative}.screen.active{display:block}.glass{border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.04));box-shadow:0 24px 80px var(--shadow);backdrop-filter:blur(16px);border-radius:var(--radius)}.muted{color:var(--muted);line-height:1.55;font-size:14px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.error{color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);padding:10px;border-radius:14px;margin-top:10px}.moving-cards-bg{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;opacity:.42}.bg-card-line{position:absolute;display:flex;gap:20px;transform:rotate(-18deg);animation:cardStream 18s linear infinite}.bg-card-line:nth-child(1){top:4%;left:-20%;animation-duration:22s}.bg-card-line:nth-child(2){top:32%;left:-35%;animation-duration:28s;animation-delay:-6s}.bg-card-line:nth-child(3){top:64%;left:-25%;animation-duration:24s;animation-delay:-11s}.bg-card{width:70px;height:100px;border-radius:13px;border:1px solid rgba(255,255,255,.16);background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.13),transparent 28%),linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.045));box-shadow:0 14px 34px rgba(0,0,0,.32);position:relative}.bg-card::after{content:"♠";position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.24);font-size:34px;filter:grayscale(1)}@keyframes cardStream{from{transform:translateX(-20%) rotate(-18deg)}to{transform:translateX(120vw) rotate(-18deg)}}.center-page{min-height:calc(100vh - 44px);display:grid;place-items:center;position:relative;z-index:1}.hero-card{width:min(540px,100%);padding:30px;text-align:center}.dealer-badge{width:104px;height:104px;margin:0 auto 18px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);background:radial-gradient(circle at 34% 26%,rgba(255,255,255,.28),transparent 30%),linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.04));box-shadow:inset 0 0 26px rgba(255,255,255,.055),0 20px 48px rgba(0,0,0,.48);font-size:46px;filter:grayscale(1);animation:dealerIdle 2.4s ease-in-out infinite alternate}.hero-title{margin:0;font-size:clamp(42px,8vw,76px);line-height:.88;letter-spacing:-.085em;font-weight:1000;text-shadow:0 18px 44px rgba(0,0,0,.7)}.hero-subtitle{margin:14px auto 24px;max-width:420px}.form-stack{display:grid;gap:12px}.list-shell{width:min(1180px,100%);margin:0 auto;position:relative;z-index:1}.list-topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px;padding:18px}.brand-row{display:flex;align-items:center;gap:14px;min-width:0}.brand-icon{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:28px;background:rgba(255,255,255,.1);border:1px solid var(--line);filter:grayscale(1)}.brand-title{margin:0;font-size:30px;letter-spacing:-.06em;line-height:1}.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}.room-card{padding:18px;min-height:180px;position:relative;overflow:hidden;cursor:pointer;transition:transform .18s ease,border-color .18s ease,background .18s ease}.room-card:hover{transform:translateY(-4px) scale(1.01);border-color:rgba(255,255,255,.36);background:linear-gradient(145deg,rgba(255,255,255,.14),rgba(255,255,255,.055))}.room-card::after{content:"♣";position:absolute;right:-10px;bottom:-24px;font-size:120px;color:rgba(255,255,255,.045);transform:rotate(-12deg)}.room-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.room-name{margin:0;font-size:22px;letter-spacing:-.04em;line-height:1.1}.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(0,0,0,.2);color:#ddd;font-size:12px;font-weight:800;white-space:nowrap}.room-meta{display:grid;gap:8px;margin-top:18px;font-size:13px;color:var(--muted)}.room-meta-row{display:flex;justify-content:space-between;gap:10px}.lobby-layout{width:min(1100px,100%);margin:0 auto;min-height:calc(100vh - 44px);display:grid;grid-template-columns:1fr 330px;gap:18px;align-items:stretch}.lobby-main,.lobby-side{padding:22px}.lobby-title{margin:0;font-size:42px;letter-spacing:-.07em}.player-list{display:grid;gap:12px;margin-top:20px}.player-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.055)}.avatar{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;border:1px solid var(--line);background:rgba(255,255,255,.09);filter:grayscale(1)}.player-left{display:flex;align-items:center;gap:12px}.countdown{position:fixed;inset:0;display:none;place-items:center;z-index:100;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);font-size:clamp(90px,20vw,220px);font-weight:1000;text-shadow:0 30px 70px rgba(0,0,0,.72)}.countdown.show{display:grid}.game-wrap{width:min(1420px,100%);margin:0 auto;min-height:calc(100vh - 44px);display:grid;grid-template-rows:auto 1fr;gap:14px}.game-topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px}.turn-badge{padding:8px 12px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.1);font-weight:950;white-space:nowrap}.game-board{display:grid;grid-template-areas:". top ." "left center right" ". bottom .";grid-template-columns:minmax(260px,1fr) minmax(360px,1.14fr) minmax(260px,1fr);grid-template-rows:minmax(172px,auto) minmax(270px,1fr) minmax(190px,auto);gap:16px}.seat{position:relative;min-height:160px;padding:13px;display:flex;flex-direction:column;gap:10px;overflow:hidden;border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.04)),repeating-linear-gradient(45deg,rgba(255,255,255,.018) 0 2px,transparent 2px 9px);box-shadow:inset 0 0 32px rgba(255,255,255,.025),0 14px 42px rgba(0,0,0,.22)}.seat.active{outline:2px solid rgba(255,255,255,.72);box-shadow:0 0 40px rgba(255,255,255,.14),0 14px 42px rgba(0,0,0,.22)}.seat.defending{outline:2px solid rgba(255,255,255,.9);animation:defensePulse .8s ease-in-out infinite alternate}.seat.finished{opacity:.52;filter:grayscale(1)}.seat-top{grid-area:top}.seat-left{grid-area:left}.seat-right{grid-area:right}.seat-bottom{grid-area:bottom}.seat-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.seat-name{font-weight:950;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.card-count{color:var(--muted);font-size:12px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;background:rgba(0,0,0,.25)}.hand-frame{position:relative;flex:1;min-height:112px;display:flex;align-items:center;padding:10px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.16);overflow-x:auto;overflow-y:hidden}.hand{display:flex;flex-direction:row;align-items:center;gap:8px;min-height:100px;min-width:max-content;padding:6px}.seat-top .hand{transform:rotate(180deg)}.seat-left .hand{transform:rotate(90deg);transform-origin:center}.seat-right .hand{transform:rotate(-90deg);transform-origin:center}.table-center{grid-area:center;min-height:270px;padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:12px;overflow:hidden;border:1px solid rgba(255,255,255,.16);border-radius:30px;background:radial-gradient(circle at 50% 18%,rgba(255,255,255,.09),transparent 30%),linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.035)),repeating-linear-gradient(45deg,rgba(255,255,255,.025) 0 2px,transparent 2px 9px)}.dealer-face{width:96px;height:96px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.28),transparent 30%),linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.045));box-shadow:inset 0 0 24px rgba(255,255,255,.055),0 18px 42px rgba(0,0,0,.42);font-size:42px;filter:grayscale(1);animation:dealerIdle 2.4s ease-in-out infinite alternate}.oldmaid-logo{margin:0;font-size:clamp(34px,4vw,58px);letter-spacing:-.085em;line-height:.92;font-weight:1000;text-shadow:0 14px 38px rgba(0,0,0,.68)}.order-line{font-size:13px;color:#eee;font-weight:900}.floating-zone{min-height:78px;display:flex;align-items:center;justify-content:center}.lasso-card{position:relative;display:grid;place-items:center;animation:lassoFloat 1s ease-in-out infinite alternate}.lasso-card::before{content:"";position:absolute;width:118px;height:118px;border:2px dashed rgba(255,255,255,.48);border-radius:50%;animation:lassoSpin 2.2s linear infinite}.lasso-card .card{transform:scale(.72)}.card{width:var(--card-w);height:var(--card-h);flex:0 0 auto;position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:7px;border-radius:12px;border:1px solid rgba(0,0,0,.24);color:#070707;background:linear-gradient(145deg,#f7f7f7,#d7d7d7);box-shadow:0 8px 18px rgba(0,0,0,.3);font-weight:950;user-select:none;transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}.card:hover{filter:brightness(1.06)}.card.back{color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.22);background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.16),transparent 28%),linear-gradient(135deg,#4a4a4a,#111)}.card.back::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;font-size:28px;font-weight:1000}.card.pickable{cursor:pointer;outline:2px solid rgba(255,255,255,.82);animation:floaty 1s ease-in-out infinite alternate}.card.joker{background:linear-gradient(135deg,#fff,#cfcfcf)}.suit{font-size:15px;line-height:1}.rank-big{align-self:center;margin-top:6px;font-size:28px}.slot{width:28px;height:96px;flex:0 0 auto;border:1px dashed rgba(255,255,255,.16);border-radius:999px;opacity:.2;transition:opacity .13s ease,width .13s ease,background .13s ease,box-shadow .13s ease}.slot.active{width:36px;opacity:1;cursor:pointer;background:linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,.05));box-shadow:0 0 22px rgba(255,255,255,.28),inset 0 0 18px rgba(255,255,255,.18);animation:slotGlow .7s ease-in-out infinite alternate}.game-side-toggle,.discard-toggle-game{position:fixed;top:18px;z-index:70}.game-side-toggle{left:18px}.discard-toggle-game{right:18px}.info-sidebar,.discard-sidebar{position:fixed;top:72px;width:min(340px,calc(100vw - 36px));max-height:calc(100vh - 90px);overflow:auto;z-index:65;padding:16px;transition:transform .22s ease,opacity .22s ease}.info-sidebar{left:18px}.discard-sidebar{right:18px}.info-sidebar.closed{transform:translateX(calc(-100% - 45px));opacity:.18}.discard-sidebar.closed{transform:translateX(calc(100% + 45px));opacity:.18}.side-section{border:1px solid var(--line);background:rgba(0,0,0,.18);border-radius:18px;padding:14px;margin-bottom:12px}.log-list{display:grid;gap:8px;font-size:13px;color:#ddd;max-height:220px;overflow:auto}.discard-pair{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px dashed rgba(255,255,255,.13);padding-top:9px;margin-top:9px}.mini-cards{display:flex;gap:5px}.mini-card{width:34px;height:50px;border-radius:8px;background:linear-gradient(145deg,#f7f7f7,#cfcfcf);color:#080808;display:grid;place-items:center;font-size:12px;font-weight:900}.chat-panel{position:fixed;left:50%;bottom:18px;width:min(560px,calc(100vw - 28px));transform:translateX(-50%) translateY(130%);z-index:75;overflow:hidden;transition:transform .18s ease}.chat-panel.open{transform:translateX(-50%) translateY(0)}.chat-log{max-height:150px;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:7px;font-size:13px;background:rgba(0,0,0,.28)}.chat-input{border-radius:0;border-left:0;border-right:0;border-bottom:0}.vote-banner{position:fixed;top:14px;left:50%;width:min(430px,calc(100vw - 28px));z-index:100;padding:13px;transform:translate(-50%,-140%);transition:transform .18s ease}.vote-banner.open{transform:translate(-50%,0)}.vote-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px;color:#eee;font-weight:900}.vote-text{color:var(--text);font-size:13px;line-height:1.45;margin-bottom:9px}.vote-progress{height:7px;margin-bottom:10px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}.vote-fill{width:0;height:100%;background:linear-gradient(90deg,#f5f5f5,#aaa,#555)}.vote-fill.running{animation:voteFill 6s linear forwards}.fx-layer{position:fixed;inset:0;z-index:90;display:none;place-items:center;background:rgba(0,0,0,.68);pointer-events:none}.fx-layer.show{display:grid}.fx-content{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center}.fx-title{font-size:clamp(48px,10vw,120px);line-height:.9;font-weight:1000;letter-spacing:-.08em;text-shadow:0 18px 44px rgba(0,0,0,.72)}.fx-row{display:flex;gap:18px;animation:pairPop 1.4s ease forwards}.modal-backdrop{position:fixed;inset:0;z-index:110;display:none;place-items:center;padding:18px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px)}.modal-backdrop.show{display:grid}.modal-card{width:min(520px,100%);padding:22px}.modal-title{margin:0 0 12px;font-size:28px;letter-spacing:-.05em}.form-grid{display:grid;gap:12px}.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.travel-layer{position:fixed;inset:0;pointer-events:none;z-index:95;overflow:hidden}.travel-card{position:fixed;left:0;top:0;z-index:96;will-change:transform,opacity;transition:transform .62s cubic-bezier(.18,.86,.2,1),opacity .62s ease,filter .62s ease}@keyframes dealerIdle{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-6px) rotate(2deg)}}@keyframes floaty{from{transform:translateY(0)}to{transform:translateY(-6px)}}@keyframes defensePulse{from{filter:brightness(1)}to{filter:brightness(1.18)}}@keyframes slotGlow{from{filter:brightness(1)}to{filter:brightness(1.35)}}@keyframes lassoFloat{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-12px) rotate(2deg)}}@keyframes lassoSpin{to{transform:rotate(360deg)}}@keyframes pairPop{0%{transform:translateY(30px) scale(.4);opacity:0}20%{transform:translateY(0) scale(1.08);opacity:1}72%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-36px) scale(.72);opacity:0}}@keyframes voteFill{from{width:0}to{width:100%}}@media(max-width:980px){.screen{padding:12px}.list-topbar,.game-topbar{align-items:stretch;flex-direction:column}.lobby-layout{grid-template-columns:1fr}.game-board{grid-template-areas:"top" "left" "right" "center" "bottom";grid-template-columns:1fr;grid-template-rows:auto}.seat-top .hand,.seat-left .hand,.seat-right .hand{transform:rotate(0)}.info-sidebar,.discard-sidebar{top:68px}:root{--card-w:56px;--card-h:84px}}
+  </style>
+</head>
+<body>
+  <div class="moving-cards-bg" aria-hidden="true">
+    <div class="bg-card-line"><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div></div>
+    <div class="bg-card-line"><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div></div>
+    <div class="bg-card-line"><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div><div class="bg-card"></div></div>
+  </div>
+
+  <section class="screen active" id="configScreen">
+    <div class="center-page"><div class="hero-card glass"><div class="dealer-badge">⚙️</div><h1 class="hero-title">SETUP</h1><p class="hero-subtitle muted">config.js에 Supabase URL과 anon key를 넣어야 시작됩니다.</p><div id="configError" class="error mono"></div></div></div>
+  </section>
+
+  <section class="screen" id="nicknameScreen">
+    <div class="center-page"><div class="hero-card glass"><div class="dealer-badge">😐🎩</div><h1 class="hero-title">OLD<br>MAID</h1><p class="hero-subtitle muted">닉네임만 입력하고 방을 만들거나 참가하세요.</p><div class="form-stack"><input id="nicknameInput" placeholder="닉네임" maxlength="14"><button id="nicknameBtn">입장하기</button></div></div></div>
+  </section>
+
+  <section class="screen" id="roomListScreen">
+    <div class="list-shell"><header class="list-topbar glass"><div class="brand-row"><div class="brand-icon">🃏</div><div><h1 class="brand-title">Room List</h1><div class="muted" id="meLabel">visitor</div></div></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button id="refreshRoomsBtn" class="btn-secondary">새로고침</button><button id="openCreateBtn">방 만들기</button></div></header><div class="room-grid" id="roomGrid"></div></div>
+  </section>
+
+  <section class="screen" id="lobbyScreen">
+    <div class="lobby-layout"><main class="lobby-main glass"><div class="brand-row"><div class="brand-icon">🎩</div><div><h1 class="lobby-title" id="lobbyRoomName">Room</h1><p class="muted" id="lobbySubtitle">인원이 모두 차면 자동 시작합니다.</p></div></div><div class="player-list" id="lobbyPlayers"></div></main><aside class="lobby-side glass"><h2>Room Settings</h2><div class="form-stack" id="lobbySettings"></div><button id="leaveLobbyBtn" class="btn-secondary">방 나가기</button></aside></div>
+  </section>
+
+  <section class="screen" id="gameScreen">
+    <button class="game-side-toggle btn-secondary" id="toggleInfoBtn">정보창</button><button class="discard-toggle-game btn-secondary" id="toggleDiscardBtn">버린 짝</button>
+    <aside class="info-sidebar glass" id="infoSidebar"><div class="side-section"><strong>현재 상태</strong><p class="muted" id="gameStatusText">-</p></div><div class="side-section"><strong>스코어/등수</strong><div class="score-list" id="rankList"></div></div><div class="side-section"><strong>규칙</strong><p class="muted">뽑은 카드는 중앙에 뜬 뒤 원하는 슬롯에 넣습니다.</p></div><div class="side-section"><strong>로그</strong><div class="log-list" id="gameLog"></div></div><button id="leaveGameBtn" class="btn-secondary">방 나가기</button></aside>
+    <aside class="discard-sidebar glass closed" id="discardSidebar"><h2>버린 짝</h2><div id="discardList"></div></aside>
+    <div class="game-wrap"><header class="game-topbar glass"><div class="turn-badge" id="turnBadge">Turn</div><div class="muted" id="gameMessage">-</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="shuffleBtn" class="btn-secondary">내 덱 섞기</button><button id="settingsVoteBtn" class="btn-secondary">설정 투표</button></div></header><div class="game-board"><article class="seat seat-top" id="seat0"><div class="seat-head"><span class="seat-name" id="name0">-</span><span class="card-count" id="count0">0장</span></div><div class="hand-frame"><div class="hand" id="hand0"></div></div></article><article class="seat seat-left" id="seat1"><div class="seat-head"><span class="seat-name" id="name1">-</span><span class="card-count" id="count1">0장</span></div><div class="hand-frame"><div class="hand" id="hand1"></div></div></article><section class="table-center"><div class="dealer-face" id="dealerFace">😐🎩</div><h1 class="oldmaid-logo">OLD MAID</h1><div class="order-line" id="orderLine">-</div><div class="floating-zone" id="floatingZone"></div><div class="muted" id="centerHint">-</div></section><article class="seat seat-right" id="seat2"><div class="seat-head"><span class="seat-name" id="name2">-</span><span class="card-count" id="count2">0장</span></div><div class="hand-frame"><div class="hand" id="hand2"></div></div></article><article class="seat seat-bottom" id="seat3"><div class="seat-head"><span class="seat-name" id="name3">-</span><span class="card-count" id="count3">0장</span></div><div class="hand-frame"><div class="hand" id="hand3"></div></div></article></div></div>
+  </section>
+
+  <div class="chat-panel glass" id="chatPanel"><div class="chat-log" id="chatLog"></div><input class="chat-input" id="chatInput" placeholder="메시지를 입력하고 Enter"></div>
+  <div class="vote-banner glass" id="voteBanner"><div class="vote-head"><span id="voteTitle">설정 투표</span><span id="voteCount">0 / 0</span></div><div class="vote-text" id="voteText">-</div><div class="vote-progress"><div class="vote-fill" id="voteFill"></div></div><div class="form-row-2"><button id="voteYesBtn">찬성</button><button class="btn-secondary" id="voteNoBtn">반대</button></div></div>
+  <div class="travel-layer" id="travelLayer"></div><div class="fx-layer" id="fxLayer"><div class="fx-content" id="fxContent"></div></div><div class="countdown" id="countdownLayer">3</div>
+
+  <div class="modal-backdrop" id="createRoomModal"><div class="modal-card glass"><h2 class="modal-title">방 만들기</h2><div class="form-grid"><input id="roomNameInput" placeholder="방 이름"><div class="form-row-2"><select id="maxPlayersInput"><option value="2">2명</option><option value="3">3명</option><option value="4" selected>4명</option></select><select id="passwordModeInput"><option value="off">비밀번호 없음</option><option value="on">비밀번호 사용</option></select></div><input id="roomPasswordInput" placeholder="비밀번호"><div class="form-row-2"><select id="allowSpectatorsInput"><option value="true" selected>관전 허용</option><option value="false">관전 차단</option></select><select id="winnerChatInput"><option value="false" selected>우승자 채팅 허용</option><option value="true">우승자 채팅 차단</option></select></div><button id="createRoomBtn">방 만들기</button><button class="btn-secondary closeModalBtn">닫기</button></div></div></div>
+  <div class="modal-backdrop" id="passwordModal"><div class="modal-card glass"><h2 class="modal-title">비밀번호 입력</h2><p class="muted" id="passwordRoomName">Room</p><div class="form-grid"><input id="passwordInput" placeholder="비밀번호" type="password"><button id="passwordJoinBtn">입장</button><button class="btn-secondary closeModalBtn">닫기</button></div></div></div>
+  <div class="modal-backdrop" id="resultModal"><div class="modal-card glass"><h2 class="modal-title" id="resultTitle">WIN 🏆</h2><p class="muted" id="resultText">-</p><div class="form-grid"><button id="spectateBtn">관전모드 확인</button><button id="retryBtn" class="btn-secondary">다시하기 큐</button><button class="btn-secondary closeModalBtn">닫기</button></div></div></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const CONFIG_URL = window.OLD_MAID_SUPABASE_URL || "";
+    const CONFIG_KEY = window.OLD_MAID_SUPABASE_ANON_KEY || "";
+    const configReady = CONFIG_URL && CONFIG_KEY && !CONFIG_URL.includes("PASTE_") && !CONFIG_KEY.includes("PASTE_");
+    let db = null;
+    let visitorId = localStorage.getItem("oldmaid_visitor_id") || crypto.randomUUID();
+    localStorage.setItem("oldmaid_visitor_id", visitorId);
+    let nickname = localStorage.getItem("oldmaid_nickname") || "";
+    let rooms = [];
+    let currentRoom = null;
+    let currentPlayers = [];
+    let localPlayer = null;
+    let game = null;
+    let roomChannel = null;
+    let listChannel = null;
+    let countdownTimer = null;
+    let pendingJoinRoom = null;
+    let spectatorMode = false;
+    let spectatorViewVisitorId = null;
+    let activeVote = null;
+
+    const SUITS = [
+      { k:"S", s:"♠" }, { k:"C", s:"♣" }, { k:"H", s:"♥" }, { k:"D", s:"♦" }
+    ];
+    const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+
+    window.addEventListener("DOMContentLoaded", boot);
+
+    function boot() {
+      bindEvents();
+      if (!configReady) {
+        $("configError").textContent = "config.js에서 OLD_MAID_SUPABASE_URL / OLD_MAID_SUPABASE_ANON_KEY 값을 넣어주세요.";
+        showScreen("configScreen");
+        return;
+      }
+      db = window.supabase.createClient(CONFIG_URL, CONFIG_KEY);
+      if (nickname) $("nicknameInput").value = nickname;
+      showScreen("nicknameScreen");
+      subscribeRoomList();
+    }
+
+    function bindEvents() {
+      $("nicknameBtn").addEventListener("click", enterName);
+      $("nicknameInput").addEventListener("keydown", (e) => { if (e.key === "Enter") enterName(); });
+      $("refreshRoomsBtn").addEventListener("click", loadRooms);
+      $("openCreateBtn").addEventListener("click", () => showModal("createRoomModal"));
+      $("createRoomBtn").addEventListener("click", createRoom);
+      $("passwordJoinBtn").addEventListener("click", joinPasswordRoom);
+      $("leaveLobbyBtn").addEventListener("click", leaveRoom);
+      $("leaveGameBtn").addEventListener("click", leaveRoom);
+      $("toggleInfoBtn").addEventListener("click", () => $("infoSidebar").classList.toggle("closed"));
+      $("toggleDiscardBtn").addEventListener("click", () => $("discardSidebar").classList.toggle("closed"));
+      $("shuffleBtn").addEventListener("click", shuffleMyHand);
+      $("settingsVoteBtn").addEventListener("click", proposeWinnerChatVote);
+      $("voteYesBtn").addEventListener("click", () => castVote(true));
+      $("voteNoBtn").addEventListener("click", () => castVote(false));
+      $("spectateBtn").addEventListener("click", enterSpectatorMode);
+      $("retryBtn").addEventListener("click", retryReady);
+      document.querySelectorAll(".closeModalBtn").forEach((btn) => btn.addEventListener("click", closeModals));
+      $("chatInput").addEventListener("keydown", handleChatInput);
+      document.addEventListener("keydown", handleGlobalKey);
+      document.addEventListener("contextmenu", handleSpectatorRightClick);
+      window.addEventListener("beforeunload", () => { markDisconnected(); });
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+      $(id).classList.add("active");
+    }
+    function showModal(id) { $(id).classList.add("show"); }
+    function closeModals() { document.querySelectorAll(".modal-backdrop").forEach((m) => m.classList.remove("show")); }
+
+    async function enterName() {
+      nickname = ($("nicknameInput").value.trim() || "Player").slice(0, 14);
+      localStorage.setItem("oldmaid_nickname", nickname);
+      $("meLabel").textContent = `${nickname} · ${visitorId.slice(0, 8)}`;
+      showScreen("roomListScreen");
+      await loadRooms();
+    }
+
+    async function subscribeRoomList() {
+      if (!db) return;
+      if (listChannel) db.removeChannel(listChannel);
+      listChannel = db.channel("room-list")
+        .on("postgres_changes", { event:"*", schema:"public", table:"rooms" }, loadRooms)
+        .on("postgres_changes", { event:"*", schema:"public", table:"room_players" }, loadRooms)
+        .subscribe();
+    }
+
+    async function loadRooms() {
+      const { data, error } = await db.from("rooms").select("*").neq("status", "inactive").order("created_at", { ascending:false });
+      if (error) return showError(error.message);
+      rooms = data || [];
+      await renderRooms();
+    }
+
+    async function renderRooms() {
+      const grid = $("roomGrid");
+      grid.innerHTML = "";
+      if (!rooms.length) {
+        grid.innerHTML = `<div class="glass room-card"><h2 class="room-name">No rooms</h2><p class="muted">방을 하나 만들어보세요.</p></div>`;
+        return;
+      }
+      for (const room of rooms) {
+        const { data: players } = await db.from("room_players").select("*").eq("room_id", room.id).eq("is_connected", true);
+        const current = (players || []).filter((p) => !p.is_spectator).length;
+        const host = (players || []).find((p) => p.visitor_id === room.host_visitor_id);
+        const card = document.createElement("article");
+        card.className = "room-card glass";
+        card.innerHTML = `<div class="room-head"><h2 class="room-name">${escapeHtml(room.room_name)}</h2><span class="badge">${room.has_password ? "🔒 PASSWORD" : "OPEN"}</span></div><div class="room-meta"><div class="room-meta-row"><span>인원</span><strong>${current} / ${room.max_players}</strong></div><div class="room-meta-row"><span>상태</span><strong>${escapeHtml(room.status)}</strong></div><div class="room-meta-row"><span>방장</span><strong>${escapeHtml(host?.nickname || "-")}</strong></div></div>`;
+        card.addEventListener("click", () => attemptJoin(room, players || []));
+        grid.appendChild(card);
+      }
+    }
+
+    async function createRoom() {
+      const roomName = ($("roomNameInput").value.trim() || `${nickname}'s Room`).slice(0, 30);
+      const maxPlayers = Number($("maxPlayersInput").value);
+      const hasPassword = $("passwordModeInput").value === "on";
+      const password = $("roomPasswordInput").value.trim();
+      const allowSpectators = $("allowSpectatorsInput").value === "true";
+      const blockWinnerChat = $("winnerChatInput").value === "true";
+      if (hasPassword && !password) return alert("비밀번호를 입력하세요.");
+      const { data: room, error } = await db.from("rooms").insert({
+        room_name: roomName,
+        host_visitor_id: visitorId,
+        max_players: maxPlayers,
+        has_password: hasPassword,
+        password_text: hasPassword ? password : null,
+        allow_spectators: allowSpectators,
+        block_winner_chat: blockWinnerChat,
+        status: "waiting"
+      }).select().single();
+      if (error) return showError(error.message);
+      closeModals();
+      await joinRoom(room, false);
+    }
+
+    async function attemptJoin(room, players) {
+      const normalPlayers = players.filter((p) => !p.is_spectator);
+      if (room.status === "playing" && !room.allow_spectators) return alert("게임 중인 방이고 관전이 차단되어 있습니다.");
+      if (room.status !== "playing" && normalPlayers.length >= room.max_players) return alert("방이 가득 찼습니다.");
+      pendingJoinRoom = room;
+      if (room.has_password) {
+        $("passwordRoomName").textContent = room.room_name;
+        $("passwordInput").value = "";
+        showModal("passwordModal");
+        return;
+      }
+      await joinRoom(room, room.status === "playing");
+    }
+
+    async function joinPasswordRoom() {
+      const password = $("passwordInput").value.trim();
+      if (!pendingJoinRoom) return;
+      if (password !== (pendingJoinRoom.password_text || "")) return alert("비밀번호가 틀렸습니다.");
+      closeModals();
+      await joinRoom(pendingJoinRoom, pendingJoinRoom.status === "playing");
+    }
+
+    async function joinRoom(room, asSpectator) {
+      currentRoom = room;
+      const { data: existingPlayers } = await db.from("room_players").select("*").eq("room_id", room.id);
+      const normalPlayers = (existingPlayers || []).filter((p) => !p.is_spectator && p.visitor_id !== visitorId);
+      const usedSeats = new Set(normalPlayers.map((p) => p.seat_index));
+      let seat = null;
+      if (!asSpectator) {
+        for (let i = 0; i < room.max_players; i += 1) {
+          if (!usedSeats.has(i)) { seat = i; break; }
+        }
+      }
+      const isHost = room.host_visitor_id === visitorId;
+      const payload = {
+        room_id: room.id,
+        visitor_id: visitorId,
+        nickname,
+        seat_index: asSpectator ? null : seat,
+        is_host: isHost,
+        is_connected: true,
+        is_spectator: asSpectator,
+        status: asSpectator ? "spectating" : (room.status === "playing" ? "playing" : "waiting"),
+        retry_ready: false
+      };
+      const { error } = await db.from("room_players").upsert(payload, { onConflict:"room_id,visitor_id" });
+      if (error) return showError(error.message);
+      subscribeRoom(room.id);
+      await reloadRoom();
+      showScreen(room.status === "playing" ? "gameScreen" : "lobbyScreen");
+    }
+
+    function subscribeRoom(roomId) {
+      if (roomChannel) db.removeChannel(roomChannel);
+      roomChannel = db.channel(`room:${roomId}`)
+        .on("postgres_changes", { event:"*", schema:"public", table:"rooms", filter:`id=eq.${roomId}` }, reloadRoom)
+        .on("postgres_changes", { event:"*", schema:"public", table:"room_players", filter:`room_id=eq.${roomId}` }, reloadRoom)
+        .on("postgres_changes", { event:"*", schema:"public", table:"game_state", filter:`room_id=eq.${roomId}` }, reloadGame)
+        .on("postgres_changes", { event:"*", schema:"public", table:"chat_messages", filter:`room_id=eq.${roomId}` }, loadChat)
+        .on("postgres_changes", { event:"*", schema:"public", table:"votes", filter:`room_id=eq.${roomId}` }, loadVote)
+        .subscribe();
+    }
+
+    async function reloadRoom() {
+      if (!currentRoom) return;
+      const { data: room } = await db.from("rooms").select("*").eq("id", currentRoom.id).single();
+      if (!room) { leaveLocal(); return; }
+      currentRoom = room;
+      const { data: players } = await db.from("room_players").select("*").eq("room_id", currentRoom.id).order("seat_index", { ascending:true });
+      currentPlayers = players || [];
+      localPlayer = currentPlayers.find((p) => p.visitor_id === visitorId) || null;
+      if (currentRoom.status === "playing" || currentRoom.status === "finished") await reloadGame();
+      if (currentRoom.status === "waiting" || currentRoom.status === "countdown") {
+        showScreen("lobbyScreen");
+        renderLobby();
+        checkAutoCountdown();
+      }
+      await loadChat();
+      await loadVote();
+    }
+
+    function renderLobby() {
+      $("lobbyRoomName").textContent = currentRoom.room_name;
+      $("lobbySubtitle").textContent = currentRoom.status === "countdown" ? "카운트다운 중입니다." : "인원이 모두 차면 자동 시작합니다.";
+      const list = $("lobbyPlayers");
+      list.innerHTML = "";
+      const normals = currentPlayers.filter((p) => !p.is_spectator && p.is_connected);
+      const bySeat = new Map(normals.map((p) => [p.seat_index, p]));
+      for (let i = 0; i < currentRoom.max_players; i += 1) {
+        const p = bySeat.get(i);
+        const row = document.createElement("div");
+        row.className = "player-row";
+        row.innerHTML = p ? `<div class="player-left"><div class="avatar">${p.is_host ? "👑" : "🙂"}</div><div><strong>${escapeHtml(p.nickname)}</strong><div class="muted">${p.is_host ? "Host · " : ""}Connected</div></div></div><span class="badge">READY</span>` : `<div class="player-left"><div class="avatar">?</div><div><strong>Waiting...</strong><div class="muted">빈 자리</div></div></div><span class="badge">EMPTY</span>`;
+        list.appendChild(row);
+      }
+      $("lobbySettings").innerHTML = `<div class="player-row"><span>Max Players</span><strong>${currentRoom.max_players}</strong></div><div class="player-row"><span>Password</span><strong>${currentRoom.has_password ? "On" : "Off"}</strong></div><div class="player-row"><span>Spectator</span><strong>${currentRoom.allow_spectators ? "On" : "Off"}</strong></div><div class="player-row"><span>Status</span><strong>${currentRoom.status}</strong></div>`;
+      if (currentRoom.status === "countdown") showCountdownFromRoom();
+    }
+
+    async function checkAutoCountdown() {
+      if (!currentRoom || !localPlayer?.is_host) return;
+      const normals = currentPlayers.filter((p) => !p.is_spectator && p.is_connected);
+      if (currentRoom.status === "waiting" && normals.length >= currentRoom.max_players) {
+        await db.from("rooms").update({ status:"countdown", countdown_started_at:new Date().toISOString() }).eq("id", currentRoom.id);
+      }
+      if (currentRoom.status === "countdown" && normals.length < currentRoom.max_players) {
+        await db.from("rooms").update({ status:"waiting", countdown_started_at:null }).eq("id", currentRoom.id);
+      }
+    }
+
+    function showCountdownFromRoom() {
+      clearInterval(countdownTimer);
+      const layer = $("countdownLayer");
+      layer.classList.add("show");
+      const started = new Date(currentRoom.countdown_started_at).getTime();
+      countdownTimer = setInterval(async () => {
+        const elapsed = Math.floor((Date.now() - started) / 1000);
+        const left = 3 - elapsed;
+        layer.textContent = left > 0 ? String(left) : "START";
+        if (elapsed >= 4) {
+          clearInterval(countdownTimer);
+          layer.classList.remove("show");
+          if (localPlayer?.is_host && currentRoom.status === "countdown") await startGame();
+        }
+      }, 150);
+    }
+
+    function makeDeck() {
+      const deck = [];
+      for (const r of RANKS) for (const s of SUITS) deck.push({ id:`${r}${s.k}-${crypto.randomUUID().slice(0,6)}`, rank:r, suit:s.s, joker:false });
+      deck.push({ id:`JOKER-${crypto.randomUUID().slice(0,6)}`, rank:"JOKER", suit:"🃏", joker:true });
+      return shuffleArray(deck);
+    }
+    function shuffleArray(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    async function startGame() {
+      const normals = currentPlayers.filter((p) => !p.is_spectator && p.is_connected).sort((a,b) => a.seat_index - b.seat_index);
+      if (normals.length < currentRoom.max_players) return;
+      const deck = makeDeck();
+      const hands = {};
+      const discarded = {};
+      normals.forEach((p) => { hands[p.visitor_id] = []; discarded[p.visitor_id] = []; });
+      deck.forEach((card, i) => { hands[normals[i % normals.length].visitor_id].push(card); });
+      let logs = [`이번 판 진행 방향: ${Math.random() < 0.5 ? "시계방향" : "반시계방향"}.`];
+      for (const p of normals) {
+        const result = removePairs(hands[p.visitor_id], "시작 정리");
+        hands[p.visitor_id] = result.hand;
+        discarded[p.visitor_id] = result.pairs;
+        if (result.pairs.length) logs.unshift(`${p.nickname} PAIR! 시작 손패에서 ${result.pairs.length}쌍 제거.`);
+      }
+      const direction = logs[0].includes("시계방향") && !logs[0].includes("반") ? 1 : -1;
+      const active = normals.filter((p) => hands[p.visitor_id].length > 0);
+      const turnSeat = active[Math.floor(Math.random() * active.length)].seat_index;
+      const state = { phase:"playing", direction, turnSeat, hands, discarded, logs, finishOrder:[], ranks:{}, loserVisitorId:null, floating:null, defenseShuffles:{}, startedAt:Date.now() };
+      await db.from("game_state").upsert({ room_id:currentRoom.id, state });
+      await db.from("room_players").update({ status:"playing", rank:null, retry_ready:false }).eq("room_id", currentRoom.id);
+      await db.from("rooms").update({ status:"playing", countdown_started_at:null }).eq("id", currentRoom.id);
+      showScreen("gameScreen");
+    }
+
+    function removePairs(hand, reason) {
+      const groups = new Map();
+      for (const c of hand) {
+        if (c.joker) continue;
+        if (!groups.has(c.rank)) groups.set(c.rank, []);
+        groups.get(c.rank).push(c);
+      }
+      const remove = new Set();
+      const pairs = [];
+      for (const [rank, cards] of groups.entries()) {
+        while (cards.length >= 2) {
+          const a = cards.pop(); const b = cards.pop();
+          remove.add(a.id); remove.add(b.id);
+          pairs.push({ rank, cards:[a,b], reason, at:Date.now() });
+        }
+      }
+      return { hand:hand.filter((c) => !remove.has(c.id)), pairs };
+    }
+
+    async function reloadGame() {
+      if (!currentRoom) return;
+      const { data } = await db.from("game_state").select("state").eq("room_id", currentRoom.id).maybeSingle();
+      game = data?.state || null;
+      if (game) {
+        showScreen("gameScreen");
+        renderGame();
+      }
+    }
+
+    function seatOrderPlayers() {
+      return currentPlayers.filter((p) => !p.is_spectator).sort((a,b) => a.seat_index - b.seat_index);
+    }
+    function activePlayers() {
+      return seatOrderPlayers().filter((p) => game?.hands?.[p.visitor_id]?.length > 0 && !game.ranks?.[p.visitor_id]);
+    }
+    function nextTargetSeat(fromSeat) {
+      const players = seatOrderPlayers();
+      if (!players.length) return null;
+      let seat = fromSeat;
+      for (let i = 0; i < 8; i += 1) {
+        seat = (seat + game.direction + currentRoom.max_players) % currentRoom.max_players;
+        const p = players.find((x) => x.seat_index === seat);
+        if (p && game.hands[p.visitor_id]?.length > 0 && !game.ranks[p.visitor_id]) return seat;
+      }
+      return null;
+    }
+    function getPlayerBySeat(seat) { return currentPlayers.find((p) => !p.is_spectator && p.seat_index === seat); }
+    function getPlayerByVisitor(vid) { return currentPlayers.find((p) => p.visitor_id === vid); }
+
+    function renderGame() {
+      if (!game) return;
+      const players = seatOrderPlayers();
+      const turnPlayer = getPlayerBySeat(game.turnSeat);
+      const targetSeat = turnPlayer ? nextTargetSeat(turnPlayer.seat_index) : null;
+      const targetPlayer = targetSeat !== null ? getPlayerBySeat(targetSeat) : null;
+      $("dealerFace").textContent = game.phase === "inserting" ? "🤔🎩" : currentRoom.status === "finished" ? "😮🎩" : "😐🎩";
+      $("turnBadge").textContent = currentRoom.status === "finished" ? "Game Finished" : `${turnPlayer?.nickname || "-"} Turn`;
+      $("gameMessage").textContent = game.phase === "inserting" ? "카드가 떠 있습니다. 넣을 위치를 선택하세요." : `${turnPlayer?.nickname || "-"} → ${targetPlayer?.nickname || "-"}`;
+      $("gameStatusText").textContent = `${currentRoom.status} · ${game.direction === 1 ? "시계방향" : "반시계방향"}`;
+      $("orderLine").textContent = orderLineText();
+      $("centerHint").textContent = game.phase === "inserting" && game.floating?.drawerVisitorId === visitorId ? "빛나는 슬롯을 눌러 카드를 넣으세요." : "상대 카드는 뒷면으로만 보입니다.";
+      $("shuffleBtn").disabled = !canShuffleMine();
+      renderRanks(players);
+      renderSeats(players, targetSeat);
+      renderFloating();
+      renderDiscards(players);
+      renderLogs();
+      maybeShowImmediateResult();
+    }
+
+    function orderLineText() {
+      const players = seatOrderPlayers();
+      const dir = game.direction === 1 ? "시계방향" : "반시계방향";
+      const ordered = [];
+      let seat = 0;
+      for (let i = 0; i < players.length; i += 1) {
+        const p = getPlayerBySeat(seat);
+        if (p) ordered.push(p.seat_index === game.turnSeat && currentRoom.status !== "finished" ? `[${p.nickname}]` : p.nickname);
+        seat = (seat + game.direction + currentRoom.max_players) % currentRoom.max_players;
+      }
+      return `이번 판: ${dir} · ${ordered.join(" → ")}`;
+    }
+
+    function renderRanks(players) {
+      $("rankList").innerHTML = players.map((p) => `<div class="score-row"><span>${escapeHtml(p.nickname)}</span><strong>${game.ranks?.[p.visitor_id] ? `${game.ranks[p.visitor_id]}등` : "진행 중"}</strong></div>`).join("");
+    }
+
+    function renderSeats(players, targetSeat) {
+      const visualMap = ["seat0", "seat1", "seat2", "seat3"];
+      const nameMap = ["name0", "name1", "name2", "name3"];
+      const countMap = ["count0", "count1", "count2", "count3"];
+      const handMap = ["hand0", "hand1", "hand2", "hand3"];
+      for (let i = 0; i < 4; i += 1) {
+        const seatEl = $(visualMap[i]);
+        const p = players[i];
+        seatEl.classList.remove("active", "defending", "finished");
+        $(nameMap[i]).textContent = "-";
+        $(countMap[i]).textContent = "0장";
+        $(handMap[i]).innerHTML = "";
+        if (!p) continue;
+        const hand = game.hands[p.visitor_id] || [];
+        const finished = Boolean(game.ranks?.[p.visitor_id]);
+        $(nameMap[i]).textContent = `${p.nickname}${finished ? ` · ${game.ranks[p.visitor_id]}등` : ""}`;
+        $(countMap[i]).textContent = `${hand.length}장`;
+        seatEl.classList.toggle("active", p.seat_index === game.turnSeat && currentRoom.status !== "finished");
+        seatEl.classList.toggle("defending", p.seat_index === targetSeat && currentRoom.status !== "finished");
+        seatEl.classList.toggle("finished", finished);
+        renderHand($(handMap[i]), p, hand, targetSeat);
+      }
+    }
+
+    function renderHand(container, player, hand, targetSeat) {
+      container.innerHTML = "";
+      const reveal = player.visitor_id === visitorId || (spectatorMode && spectatorViewVisitorId === player.visitor_id);
+      const canInsert = game.phase === "inserting" && game.floating?.drawerVisitorId === visitorId && player.visitor_id === visitorId;
+      if (canInsert) appendSlot(container, 0);
+      hand.forEach((card, idx) => {
+        const el = reveal ? cardEl(card) : backCardEl();
+        if (!reveal && canPickFrom(player, targetSeat)) {
+          el.classList.add("pickable");
+          el.addEventListener("click", () => drawCardFromTarget(idx));
+        }
+        container.appendChild(el);
+        if (canInsert) appendSlot(container, idx + 1);
+      });
+    }
+
+    function canPickFrom(player, targetSeat) {
+      const me = currentPlayers.find((p) => p.visitor_id === visitorId);
+      return game.phase === "playing" && me && me.seat_index === game.turnSeat && player.seat_index === targetSeat && currentRoom.status === "playing";
+    }
+
+    function appendSlot(container, index) {
+      const slot = document.createElement("div");
+      slot.className = "slot active";
+      slot.addEventListener("click", () => insertFloatingCard(index));
+      container.appendChild(slot);
+    }
+
+    function cardEl(card, small=false) {
+      const el = document.createElement("div");
+      el.className = `card${card.joker ? " joker" : ""}${small ? " mini-card" : ""}`;
+      if (card.joker) el.innerHTML = `<div class="suit">BLACK</div><div class="rank-big">🃏</div><div class="suit" style="align-self:flex-end">JOKER</div>`;
+      else el.innerHTML = `<div class="suit">${card.rank}${card.suit}</div><div class="rank-big">${card.suit}</div><div class="suit" style="align-self:flex-end">${card.rank}</div>`;
+      return el;
+    }
+    function backCardEl() { const el = document.createElement("div"); el.className = "card back"; return el; }
+
+    function renderFloating() {
+      const zone = $("floatingZone");
+      zone.innerHTML = "";
+      if (game.phase !== "inserting" || !game.floating) return;
+      const wrap = document.createElement("div");
+      wrap.className = "lasso-card";
+      wrap.appendChild(game.floating.drawerVisitorId === visitorId ? cardEl(game.floating.card) : backCardEl());
+      zone.appendChild(wrap);
+    }
+
+    function renderDiscards(players) {
+      const box = $("discardList");
+      box.innerHTML = "";
+      for (const p of players) {
+        const pairs = game.discarded?.[p.visitor_id] || [];
+        const section = document.createElement("div");
+        section.className = "side-section";
+        section.innerHTML = `<strong>${escapeHtml(p.nickname)}</strong><div class="muted">${pairs.length}쌍</div>`;
+        for (const pair of pairs.slice(-8)) {
+          const row = document.createElement("div");
+          row.className = "discard-pair";
+          row.innerHTML = `<div class="muted">${escapeHtml(pair.reason || "pair")}</div><div class="mini-cards"><div class="mini-card">${cardLabel(pair.cards[0])}</div><div class="mini-card">${cardLabel(pair.cards[1])}</div></div>`;
+          section.appendChild(row);
+        }
+        box.appendChild(section);
+      }
+    }
+    function renderLogs() { $("gameLog").innerHTML = (game.logs || []).slice(0, 30).map((x) => `<div>${escapeHtml(x)}</div>`).join(""); }
+    function cardLabel(c) { return c?.joker ? "🃏" : `${c.rank}${c.suit}`; }
+
+    async function drawCardFromTarget(cardIndex) {
+      const me = currentPlayers.find((p) => p.visitor_id === visitorId);
+      const targetSeat = nextTargetSeat(me.seat_index);
+      const target = getPlayerBySeat(targetSeat);
+      const targetHand = game.hands[target.visitor_id] || [];
+      const [card] = targetHand.splice(cardIndex, 1);
+      game.hands[target.visitor_id] = targetHand;
+      game.phase = "inserting";
+      game.floating = { card, drawerVisitorId: visitorId, targetVisitorId: target.visitor_id };
+      game.logs.unshift(`${nickname}이 ${target.nickname}에게서 카드 1장을 뽑았습니다.`);
+      if (card.joker) showFx("joker", card);
+      await saveGame();
+    }
+
+    async function insertFloatingCard(slotIndex) {
+      if (game.phase !== "inserting" || game.floating?.drawerVisitorId !== visitorId) return;
+      const card = game.floating.card;
+      const me = currentPlayers.find((p) => p.visitor_id === visitorId);
+      const hand = game.hands[visitorId] || [];
+      hand.splice(slotIndex, 0, card);
+      const pairResult = removePairs(hand, "뽑은 뒤");
+      game.hands[visitorId] = pairResult.hand;
+      game.discarded[visitorId] = [...(game.discarded[visitorId] || []), ...pairResult.pairs];
+      if (pairResult.pairs.length) {
+        game.logs.unshift(`${nickname} PAIR! ${pairResult.pairs.length}쌍을 버렸습니다.`);
+        showFx("pair", null, pairResult.pairs[0], nickname);
+      }
+      game.floating = null;
+      game.phase = "playing";
+      checkFinish(me);
+      if (activePlayers().length <= 1) await finishGame();
+      else advanceTurn();
+      await saveGame();
+    }
+
+    function checkFinish(player) {
+      if (!player || game.ranks[player.visitor_id]) return;
+      if ((game.hands[player.visitor_id] || []).length === 0) {
+        game.finishOrder.push(player.visitor_id);
+        game.ranks[player.visitor_id] = game.finishOrder.length;
+        game.logs.unshift(`${player.nickname}이 ${game.ranks[player.visitor_id]}등으로 탈출했습니다.`);
+      }
+    }
+
+    function advanceTurn() {
+      const players = seatOrderPlayers();
+      let seat = game.turnSeat;
+      for (let i = 0; i < 8; i += 1) {
+        seat = (seat + game.direction + currentRoom.max_players) % currentRoom.max_players;
+        const p = players.find((x) => x.seat_index === seat);
+        if (p && (game.hands[p.visitor_id] || []).length > 0 && !game.ranks[p.visitor_id]) {
+          game.turnSeat = seat;
+          game.defenseShuffles = {};
+          return;
+        }
+      }
+    }
+
+    async function finishGame() {
+      const remaining = activePlayers()[0];
+      if (remaining) {
+        game.finishOrder.push(remaining.visitor_id);
+        game.ranks[remaining.visitor_id] = game.finishOrder.length;
+        game.loserVisitorId = remaining.visitor_id;
+        game.logs.unshift(`${remaining.nickname}이 마지막까지 조커를 들고 패배했습니다.`);
+      }
+      game.phase = "finished";
+      await db.from("rooms").update({ status:"finished" }).eq("id", currentRoom.id);
+      for (const p of seatOrderPlayers()) {
+        await db.from("room_players").update({ rank:game.ranks[p.visitor_id] || null, status:p.visitor_id === game.loserVisitorId ? "lost" : "finished" }).eq("room_id", currentRoom.id).eq("visitor_id", p.visitor_id);
+      }
+    }
+
+    async function shuffleMyHand() {
+      if (!game || currentRoom.status !== "playing") return;
+      const me = currentPlayers.find((p) => p.visitor_id === visitorId);
+      if (!me || game.ranks[visitorId]) return;
+      const targetSeat = nextTargetSeat(game.turnSeat);
+      const defending = targetSeat === me.seat_index && game.phase === "playing" && me.seat_index !== game.turnSeat;
+      game.defenseShuffles = game.defenseShuffles || {};
+      if (defending && (game.defenseShuffles[visitorId] || 0) >= 2) return alert("방어 섞기는 최대 2번입니다.");
+      game.hands[visitorId] = shuffleArray(game.hands[visitorId] || []);
+      if (defending) game.defenseShuffles[visitorId] = (game.defenseShuffles[visitorId] || 0) + 1;
+      game.logs.unshift(defending ? `${nickname}이 방어 섞기를 했습니다. (${game.defenseShuffles[visitorId]}/2)` : `${nickname}이 덱을 섞었습니다.`);
+      await saveGame();
+    }
+    function canShuffleMine() {
+      if (!game || currentRoom?.status !== "playing" || game.phase !== "playing") return false;
+      const hand = game.hands?.[visitorId] || [];
+      if (hand.length <= 1 || game.ranks?.[visitorId]) return false;
+      const me = currentPlayers.find((p) => p.visitor_id === visitorId);
+      if (!me) return false;
+      const targetSeat = nextTargetSeat(game.turnSeat);
+      const defending = targetSeat === me.seat_index && me.seat_index !== game.turnSeat;
+      return !defending || ((game.defenseShuffles?.[visitorId] || 0) < 2);
+    }
+
+    async function saveGame() { await db.from("game_state").upsert({ room_id:currentRoom.id, state:game }); }
+
+    function maybeShowImmediateResult() {
+      if (!game || !game.ranks?.[visitorId]) return;
+      if (sessionStorage.getItem(`result_${currentRoom.id}_${visitorId}_${game.ranks[visitorId]}`)) return;
+      sessionStorage.setItem(`result_${currentRoom.id}_${visitorId}_${game.ranks[visitorId]}`, "1");
+      const lost = game.loserVisitorId === visitorId;
+      showResult(lost ? "LOSE 😛" : "WIN 🏆", lost ? `${game.ranks[visitorId]}등입니다. 다시하기 큐를 누르세요.` : `${game.ranks[visitorId]}등으로 탈출했습니다. 관전모드로 들어갈 수 있습니다.`);
+    }
+    function showResult(title, text) { $("resultTitle").textContent = title; $("resultText").textContent = text; $("spectateBtn").style.display = title.includes("WIN") ? "block" : "none"; showModal("resultModal"); }
+
+    function enterSpectatorMode() {
+      spectatorMode = true;
+      const remaining = activePlayers().find((p) => p.visitor_id !== visitorId);
+      spectatorViewVisitorId = remaining?.visitor_id || null;
+      closeModals();
+      renderGame();
+    }
+    function handleSpectatorRightClick(e) {
+      if (!spectatorMode || !game) return;
+      e.preventDefault();
+      const alive = activePlayers();
+      if (!alive.length) return;
+      const idx = alive.findIndex((p) => p.visitor_id === spectatorViewVisitorId);
+      spectatorViewVisitorId = alive[(idx + 1) % alive.length].visitor_id;
+      renderGame();
+    }
+
+    async function retryReady() {
+      if (!currentRoom) return;
+      await db.from("room_players").update({ retry_ready:true }).eq("room_id", currentRoom.id).eq("visitor_id", visitorId);
+      const { data: players } = await db.from("room_players").select("*").eq("room_id", currentRoom.id).eq("is_connected", true).eq("is_spectator", false);
+      const ready = (players || []).filter((p) => p.retry_ready).length;
+      if (players?.length && ready >= players.length && localPlayer?.is_host) {
+        await db.from("room_players").update({ retry_ready:false, rank:null, status:"waiting" }).eq("room_id", currentRoom.id);
+        await db.from("rooms").update({ status:"waiting" }).eq("id", currentRoom.id);
+      }
+      closeModals();
+    }
+
+    function showFx(type, card=null, pair=null, name="") {
+      const layer = $("fxLayer");
+      const content = $("fxContent");
+      if (type === "pair" && pair) content.innerHTML = `<div class="fx-title">${escapeHtml(name)} PAIR!</div><div class="fx-row"></div>`;
+      else if (type === "joker") content.innerHTML = `<div class="fx-title">JOKER!</div>`;
+      else content.innerHTML = `<div class="fx-title">WIN 🏆</div>`;
+      if (type === "pair" && pair) {
+        const row = content.querySelector(".fx-row");
+        row.appendChild(cardEl(pair.cards[0])); row.appendChild(cardEl(pair.cards[1]));
+      }
+      if (type === "joker" && card) content.appendChild(cardEl(card));
+      layer.classList.add("show");
+      setTimeout(() => { layer.classList.remove("show"); content.innerHTML = ""; }, 1500);
+    }
+
+    async function loadChat() {
+      if (!currentRoom) return;
+      const { data } = await db.from("chat_messages").select("*").eq("room_id", currentRoom.id).order("created_at", { ascending:true }).limit(50);
+      $("chatLog").innerHTML = (data || []).map((m) => `<div><strong>${escapeHtml(m.nickname)}</strong>: ${escapeHtml(m.message)}</div>`).join("") || `<div class="muted">Enter로 채팅 열기</div>`;
+      $("chatLog").scrollTop = $("chatLog").scrollHeight;
+    }
+    function handleGlobalKey(e) {
+      if (e.key !== "Enter") return;
+      if ($("chatPanel").classList.contains("open") || document.activeElement === $("chatInput")) return;
+      if ($("gameScreen").classList.contains("active")) { $("chatPanel").classList.add("open"); setTimeout(() => $("chatInput").focus(), 0); }
+    }
+    async function handleChatInput(e) {
+      if (e.key !== "Enter") return;
+      e.preventDefault();
+      const text = $("chatInput").value.trim();
+      if (!text) { $("chatPanel").classList.remove("open"); return; }
+      if (game?.ranks?.[visitorId] && currentRoom.block_winner_chat) { alert("우승자 채팅이 차단되어 있습니다."); $("chatInput").value = ""; return; }
+      await db.from("chat_messages").insert({ room_id:currentRoom.id, visitor_id:visitorId, nickname, message:text.slice(0, 300) });
+      $("chatInput").value = "";
+    }
+
+    async function proposeWinnerChatVote() {
+      if (!currentRoom) return;
+      const proposed = !currentRoom.block_winner_chat;
+      await db.from("votes").insert({ room_id:currentRoom.id, vote_type:"block_winner_chat", proposed_value:proposed, started_by_visitor_id:visitorId, votes_payload:{}, expires_at:new Date(Date.now()+6000).toISOString() });
+    }
+    async function loadVote() {
+      if (!currentRoom) return;
+      const { data } = await db.from("votes").select("*").eq("room_id", currentRoom.id).eq("status", "active").order("created_at", { ascending:false }).limit(1).maybeSingle();
+      activeVote = data || null;
+      if (!activeVote) { $("voteBanner").classList.remove("open"); return; }
+      $("voteTitle").textContent = "우승자 채팅 설정 투표";
+      $("voteText").textContent = `우승자 채팅 ${activeVote.proposed_value ? "막기" : "허용"}로 바꿀까요?`;
+      const votes = activeVote.votes_payload || {};
+      $("voteCount").textContent = `${Object.keys(votes).length} / ${currentPlayers.filter((p)=>!p.is_spectator && p.is_connected).length}`;
+      $("voteFill").classList.remove("running"); void $("voteFill").offsetWidth; $("voteFill").classList.add("running");
+      $("voteBanner").classList.add("open");
+      setTimeout(finishVoteIfNeeded, Math.max(200, new Date(activeVote.expires_at).getTime() - Date.now() + 80));
+    }
+    async function castVote(value) {
+      if (!activeVote) return;
+      const votes = { ...(activeVote.votes_payload || {}) };
+      votes[visitorId] = value;
+      await db.from("votes").update({ votes_payload:votes }).eq("id", activeVote.id);
+    }
+    async function finishVoteIfNeeded() {
+      if (!activeVote || new Date(activeVote.expires_at).getTime() > Date.now()) return;
+      const { data: fresh } = await db.from("votes").select("*").eq("id", activeVote.id).single();
+      if (!fresh || fresh.status !== "active") return;
+      const voters = currentPlayers.filter((p) => !p.is_spectator && p.is_connected);
+      const vals = Object.values(fresh.votes_payload || {});
+      const yes = vals.filter(Boolean).length;
+      const no = voters.length - yes;
+      const passed = yes > no;
+      await db.from("votes").update({ status:passed ? "passed" : "failed" }).eq("id", fresh.id);
+      if (passed) await db.from("rooms").update({ block_winner_chat:fresh.proposed_value }).eq("id", currentRoom.id);
+      $("voteBanner").classList.remove("open");
+    }
+
+    async function leaveRoom() {
+      if (!currentRoom) return;
+      await db.from("room_players").update({ is_connected:false, status:"disconnected" }).eq("room_id", currentRoom.id).eq("visitor_id", visitorId);
+      leaveLocal();
+    }
+    function leaveLocal() {
+      if (roomChannel && db) db.removeChannel(roomChannel);
+      roomChannel = null; currentRoom = null; currentPlayers = []; localPlayer = null; game = null; spectatorMode = false;
+      showScreen("roomListScreen"); loadRooms();
+    }
+    function markDisconnected() {
+      if (!db || !currentRoom) return;
+      db.from("room_players").update({ is_connected:false, status:"disconnected" }).eq("room_id", currentRoom.id).eq("visitor_id", visitorId);
+    }
+    function showError(msg) { alert(msg); }
+    function escapeHtml(str) { return String(str ?? "").replace(/[&<>'"]/g, (ch) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch])); }
+  </script>
+</body>
+</html>
