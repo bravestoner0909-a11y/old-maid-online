@@ -40,7 +40,7 @@ const SUPABASE_KEY=window.OLD_MAID_SUPABASE_ANON_KEY||'';
 const sb=(SUPABASE_URL&&SUPABASE_KEY&&SUPABASE_URL.includes('supabase.co'))?supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
 let visitorId=localStorage.getItem('dropzoneVisitorId')||crypto.randomUUID();localStorage.setItem('dropzoneVisitorId',visitorId);
 let nickname=localStorage.getItem('dropzoneNickname')||'';
-let currentRoom=null,players=[],gameState=null,roomSub=null,currentRoomSub=null,playerSub=null,stateSub=null,chatSub=null,hostLoop=null,renderLoop=null,inputLoop=null,bgm=null,audioOn=false,audioUnlocked=false,localInput={left:false,right:false},pendingJoinRoom=null,spectatingAs=null,lastSyncedInput='',lastKnownStateUpdate=0,lastIntroGameStart=0,countdownVisible=false;
+let currentRoom=null,players=[],gameState=null,roomSub=null,currentRoomSub=null,playerSub=null,stateSub=null,chatSub=null,hostLoop=null,renderLoop=null,inputLoop=null,roomPoll=null,roomPollBusy=false,bgm=null,audioOn=false,audioUnlocked=false,localInput={left:false,right:false},pendingJoinRoom=null,spectatingAs=null,lastSyncedInput='',lastKnownStateUpdate=0,lastIntroGameStart=0,countdownVisible=false;
 const roomGameTag='DROP_ZONE';
 
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
@@ -84,7 +84,7 @@ async function loadRoomCount(roomId,max){const {data}=await sb.from('room_player
 async function createRoom(){const name=($('roomNameInput').value.trim()||`${nickname}'s Room`).slice(0,30);const max=Number($('maxPlayersInput').value||4);const passMode=$('passwordMode').value;const pass=$('roomPasswordInput').value;const hasPass=passMode==='on'&&pass.trim();const hash=hasPass?await sha256(pass.trim()):null;const {data,error}=await sb.from('rooms').insert({room_name:`[DROP] ${name}`,host_visitor_id:visitorId,max_players:max,has_password:!!hasPass,password_hash:hash,status:'waiting',allow_spectators:true,block_winner_chat:false}).select().single();if(error){alert(error.message);return}closeModals();await joinRoom(data,false);}
 async function attemptJoin(room){if(room.has_password){pendingJoinRoom=room;$('passwordRoomName').textContent=cleanRoomName(room.room_name);$('joinPasswordInput').value='';openModal('passwordModal');return}await joinRoom(room,false)}
 async function joinPasswordRoom(){if(!pendingJoinRoom)return;const hash=await sha256($('joinPasswordInput').value.trim());if(hash!==pendingJoinRoom.password_hash){alert('비밀번호가 틀렸어.');return}closeModals();await joinRoom(pendingJoinRoom,false)}
-async function joinRoom(room,forceSpectator){const {data:existing}=await sb.from('room_players').select('*').eq('room_id',room.id).eq('visitor_id',visitorId).maybeSingle();const {data:currentPlayers}=await sb.from('room_players').select('*').eq('room_id',room.id).neq('status','disconnected');const activePlayers=(currentPlayers||[]).filter(p=>!p.is_spectator);const asSpectator=forceSpectator||room.status==='playing'||room.status==='finished'||activePlayers.length>=room.max_players;const seat=asSpectator?null:activePlayers.length;const row={room_id:room.id,visitor_id:visitorId,nickname,is_host:room.host_visitor_id===visitorId,seat_index:seat,is_connected:true,is_spectator:asSpectator,status:asSpectator?'spectating':'waiting',retry_ready:false,updated_at:new Date().toISOString()};let res;if(existing)res=await sb.from('room_players').update(row).eq('id',existing.id);else res=await sb.from('room_players').insert(row);if(res.error){alert(res.error.message);return}currentRoom=room;showScreen(asSpectator||room.status==='playing'||room.status==='finished'?'gameScreen':'lobbyScreen');await loadRoomFull();subscribeRoom(room.id);if(asSpectator){spectatingAs=null;$('controlHint').textContent='관전자 모드 · 방 나가기로 관전을 종료할 수 있습니다.'}else $('controlHint').textContent='← / → 또는 A / D 이동 · 모바일은 내 화면을 터치해서 이동';}
+async function joinRoom(room,forceSpectator){const {data:existing}=await sb.from('room_players').select('*').eq('room_id',room.id).eq('visitor_id',visitorId).maybeSingle();const {data:currentPlayers}=await sb.from('room_players').select('*').eq('room_id',room.id).neq('status','disconnected');const activePlayers=(currentPlayers||[]).filter(p=>!p.is_spectator&&p.visitor_id!==visitorId);const asSpectator=forceSpectator||room.status==='playing'||room.status==='finished'||activePlayers.length>=room.max_players;const seat=asSpectator?null:(existing&&!existing.is_spectator&&existing.seat_index!==null?existing.seat_index:activePlayers.length);const row={room_id:room.id,visitor_id:visitorId,nickname,is_host:room.host_visitor_id===visitorId,seat_index:seat,is_connected:true,is_spectator:asSpectator,status:asSpectator?'spectating':'waiting',retry_ready:false,updated_at:new Date().toISOString()};let res;if(existing)res=await sb.from('room_players').update(row).eq('id',existing.id);else res=await sb.from('room_players').insert(row);if(res.error){alert(res.error.message);return}currentRoom=room;showScreen(asSpectator||room.status==='playing'||room.status==='finished'?'gameScreen':'lobbyScreen');subscribeRoom(room.id);startRoomPolling();await loadRoomFull();if(asSpectator){spectatingAs=null;$('controlHint').textContent='관전자 모드 · 방 나가기로 관전을 종료할 수 있습니다.'}else $('controlHint').textContent='← / → 또는 A / D 이동 · 모바일은 내 화면을 터치해서 이동';}
 async function subscribeRoom(roomId){
  if(currentRoomSub)sb.removeChannel(currentRoomSub);
  if(playerSub)sb.removeChannel(playerSub);
@@ -126,15 +126,18 @@ async function loadRoomFull(){
  maybeAutoStart();
 }
 function renderAll(){if($('roomListScreen').classList.contains('active'))loadRooms();if($('lobbyScreen').classList.contains('active'))renderLobby();if($('gameScreen').classList.contains('active'))renderGameShell();renderChat();}
-function renderLobby(){if(!currentRoom)return;$('lobbyRoomName').textContent=cleanRoomName(currentRoom.room_name);$('lobbyMax').textContent=currentRoom.max_players;$('lobbyStatus').textContent=currentRoom.status;$('deleteRoomBtn').style.display=currentRoom.host_visitor_id===visitorId?'block':'none';const list=$('lobbyPlayers');list.innerHTML='';players.forEach(p=>{const row=document.createElement('div');row.className='player-row';row.innerHTML=`<div class="player-left"><div class="avatar">${p.is_spectator?'👁️':'🕹️'}</div><div><strong>${escapeHtml(p.nickname)}</strong><div class="muted">${p.is_host?'Host · ':''}${p.is_spectator?'Spectator':'Player'} · ${p.is_connected?'Connected':'Offline'}</div></div></div><span class="badge">${p.retry_ready?'READY':p.status}</span>`;list.appendChild(row)});}
-function maybeAutoStart(){if(!currentRoom||currentRoom.status!=='waiting'||gameState?.phase==='playing')return;if(currentRoom.host_visitor_id!==visitorId)return;const active=players.filter(p=>!p.is_spectator&&p.status!=='disconnected');if(active.length>=currentRoom.max_players){startCountdownAndGame();}}
+function renderLobby(){if(!currentRoom)return;$('lobbyRoomName').textContent=cleanRoomName(currentRoom.room_name);$('lobbyMax').textContent=currentRoom.max_players;const activeCount=players.filter(p=>!p.is_spectator&&p.status!=='disconnected').length;$('lobbyStatus').textContent=`${currentRoom.status} · ${activeCount}/${currentRoom.max_players}`;$('deleteRoomBtn').style.display=currentRoom.host_visitor_id===visitorId?'block':'none';const list=$('lobbyPlayers');list.innerHTML='';players.forEach(p=>{const row=document.createElement('div');row.className='player-row';row.innerHTML=`<div class="player-left"><div class="avatar">${p.is_spectator?'👁️':'🕹️'}</div><div><strong>${escapeHtml(p.nickname)}</strong><div class="muted">${p.is_host?'Host · ':''}${p.is_spectator?'Spectator':'Player'} · ${p.is_connected?'Connected':'Offline'}</div></div></div><span class="badge">${p.retry_ready?'READY':p.status}</span>`;list.appendChild(row)});}
+function isRoomCoordinator(){if(!currentRoom)return false;const active=players.filter(p=>!p.is_spectator&&p.status!=='disconnected').sort((a,b)=>new Date(a.joined_at||0)-new Date(b.joined_at||0));const host=active.find(p=>p.visitor_id===currentRoom.host_visitor_id);const coordinator=host||active[0];return coordinator?.visitor_id===visitorId;}
+function maybeAutoStart(){if(!currentRoom||currentRoom.status!=='waiting'||gameState?.phase==='playing'||countdownVisible)return;if(!isRoomCoordinator())return;const active=players.filter(p=>!p.is_spectator&&p.status!=='disconnected');if(active.length>=currentRoom.max_players){startCountdownAndGame();}}
 async function startCountdownAndGame(){
- if(!currentRoom||currentRoom.host_visitor_id!==visitorId)return;
+ if(!currentRoom||!isRoomCoordinator())return;
  const active=players.filter(p=>!p.is_spectator&&p.status!=='disconnected');
  if(active.length<currentRoom.max_players)return;
  const startedAt=new Date().toISOString();
- await sb.from('rooms').update({status:'countdown',countdown_started_at:startedAt}).eq('id',currentRoom.id);
- currentRoom={...currentRoom,status:'countdown',countdown_started_at:startedAt};
+ const {data,error}=await sb.from('rooms').update({status:'countdown',countdown_started_at:startedAt}).eq('id',currentRoom.id).eq('status','waiting').select().single();
+ if(error||!data)return;
+ currentRoom=data;
+ renderAll();
  showCountdown(async()=>{await loadRoomFull();const still=players.filter(p=>!p.is_spectator&&p.status!=='disconnected');if(still.length>=currentRoom.max_players)await startGameAsHost();else await sb.from('rooms').update({status:'waiting'}).eq('id',currentRoom.id);});
 }
 function showCountdown(done){
@@ -153,14 +156,17 @@ function showCountdown(done){
  },700)
 }
 async function startGameAsHost(){
- if(!currentRoom||currentRoom.host_visitor_id!==visitorId)return;
+ if(!currentRoom||!isRoomCoordinator())return;
  const active=players.filter(p=>!p.is_spectator&&p.status!=='disconnected').slice(0,currentRoom.max_players);
  if(active.length<2)return;
  const st=createInitialState(active);
  gameState=st;
  await sb.from('game_state').upsert({room_id:currentRoom.id,state:st,updated_at:new Date().toISOString()});
- await sb.from('rooms').update({status:'playing'}).eq('id',currentRoom.id);
+ const {data,error}=await sb.from('rooms').update({status:'playing'}).eq('id',currentRoom.id).in('status',['countdown','waiting']).select().single();
+ if(error||!data)return;
+ currentRoom=data;
  for(const p of active)await sb.from('room_players').update({status:'playing',rank:null,retry_ready:false,is_spectator:false}).eq('id',p.id);
+ await loadRoomFull();
  showGameScreenWithIntro(st,true);
  startHostLoop();
 }
@@ -221,8 +227,8 @@ async function loadChat(){if(!currentRoom)return;const {data}=await sb.from('cha
 async function handleChatKey(e){if(e.key!=='Enter')return;const text=$('chatInput').value.trim();if(!text){$('chatPanel').classList.add('closed');return}if(currentRoom){await sb.from('chat_messages').insert({room_id:currentRoom.id,visitor_id:visitorId,nickname,message:text});$('chatInput').value='';loadChat()}}
 async function joinRetry(){if(!currentRoom)return;await sb.from('room_players').update({retry_ready:true}).eq('room_id',currentRoom.id).eq('visitor_id',visitorId);const {data}=await sb.from('room_players').select('*').eq('room_id',currentRoom.id).neq('status','disconnected');const active=(data||[]).filter(p=>!p.is_spectator);const ready=active.filter(p=>p.retry_ready);if(active.length&&ready.length>=active.length){await sb.from('rooms').update({status:'waiting'}).eq('id',currentRoom.id);await sb.from('game_state').delete().eq('room_id',currentRoom.id);for(const p of active)await sb.from('room_players').update({status:'waiting',retry_ready:false,rank:null}).eq('id',p.id);gameState=null;showScreen('lobbyScreen');loadRoomFull();}else alert(`다시하기 대기: ${ready.length} / ${active.length}`)}
 function showResultIfNeeded(){if(!gameState||gameState.phase!=='finished')return;const me=gameState.players.find(p=>p.visitor_id===visitorId);if(!me||$('resultModal').classList.contains('show'))return;const won=gameState.winner===visitorId;$('resultTitle').textContent=won?'WIN 🏆':'LOSE 😵';$('resultText').textContent=won?`1등 생존 성공! 점수 ${Math.floor(me.score||0)}`:`${me.rank||'?'}등으로 탈락. 점수 ${Math.floor(me.score||0)}`;$('resultModal').classList.add('show');}
-async function deleteCurrentRoom(){if(!currentRoom||currentRoom.host_visitor_id!==visitorId)return;const ok=confirm('이 방을 삭제할까?');if(!ok)return;const {error}=await sb.rpc('delete_room_if_host',{p_room_id:currentRoom.id,p_visitor_id:visitorId});if(error)alert(error.message);else{currentRoom=null;gameState=null;showScreen('roomListScreen');loadRooms();}}
-async function leaveRoom(){if(!currentRoom)return;await sb.from('room_players').update({status:'disconnected',is_connected:false}).eq('room_id',currentRoom.id).eq('visitor_id',visitorId);currentRoom=null;gameState=null;players=[];showScreen('roomListScreen');loadRooms();}
+async function deleteCurrentRoom(){if(!currentRoom||currentRoom.host_visitor_id!==visitorId)return;const ok=confirm('이 방을 삭제할까?');if(!ok)return;const {error}=await sb.rpc('delete_room_if_host',{p_room_id:currentRoom.id,p_visitor_id:visitorId});if(error)alert(error.message);else{stopRoomPolling();currentRoom=null;gameState=null;players=[];showScreen('roomListScreen');loadRooms();}}
+async function leaveRoom(){if(!currentRoom)return;await sb.from('room_players').update({status:'disconnected',is_connected:false}).eq('room_id',currentRoom.id).eq('visitor_id',visitorId);stopRoomPolling();if(currentRoomSub)sb.removeChannel(currentRoomSub);if(playerSub)sb.removeChannel(playerSub);if(stateSub)sb.removeChannel(stateSub);if(chatSub)sb.removeChannel(chatSub);currentRoom=null;gameState=null;players=[];showScreen('roomListScreen');loadRooms();}
 </script>
 </body>
 </html>
